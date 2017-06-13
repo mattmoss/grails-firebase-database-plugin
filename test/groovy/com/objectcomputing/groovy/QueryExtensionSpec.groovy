@@ -22,7 +22,10 @@ class QueryExtensionSpec extends Specification {
             result = error ?: snapshot
         }
 
-        and:
+        then:
+        listener instanceof ValueEventListener
+
+        when:
         listener.onCancelled(mockError)
 
         then:
@@ -42,7 +45,10 @@ class QueryExtensionSpec extends Specification {
             result = error ?: snapshot
         }
 
-        and:
+        then:
+        listener instanceof ValueEventListener
+
+        when:
         listener.onDataChange(mockSnapshot)
 
         then:
