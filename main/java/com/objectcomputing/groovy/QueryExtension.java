@@ -105,24 +105,60 @@ public class QueryExtension {
         );
     }
 
+    /**
+     * Attach a child event listener to this database query object.
+     * This listener only listens for the onChildAdded event.
+     * Provide return value to removeEventListener to detach the listener.\
+     *
+     * @param self Firebase database Query
+     * @param closure Groovy closure
+     * @return a Firebase database ChildEventListener
+     */
     public static ChildEventListener onChildAdded(Query self, Closure closure) {
         return self.addChildEventListener(
                 ChildEventListenerBuilder.create().onChildAdded(closure).build()
         );
     }
 
+    /**
+     * Attach a child event listener to this database query object.
+     * This listener only listens for the onChildChanged event.
+     * Provide return value to removeEventListener to detach the listener.\
+     *
+     * @param self Firebase database Query
+     * @param closure Groovy closure
+     * @return a Firebase database ChildEventListener
+     */
     public static ChildEventListener onChildChanged(Query self, Closure closure) {
         return self.addChildEventListener(
                 ChildEventListenerBuilder.create().onChildChanged(closure).build()
         );
     }
 
+    /**
+     * Attach a child event listener to this database query object.
+     * This listener only listens for the onChildMoved event.
+     * Provide return value to removeEventListener to detach the listener.\
+     *
+     * @param self Firebase database Query
+     * @param closure Groovy closure
+     * @return a Firebase database ChildEventListener
+     */
     public static ChildEventListener onChildMoved(Query self, Closure closure) {
         return self.addChildEventListener(
                 ChildEventListenerBuilder.create().onChildMoved(closure).build()
         );
     }
 
+    /**
+     * Attach a child event listener to this database query object.
+     * This listener only listens for the onChildRemoved event.
+     * Provide return value to removeEventListener to detach the listener.\
+     *
+     * @param self Firebase database Query
+     * @param closure Groovy closure
+     * @return a Firebase database ChildEventListener
+     */
     public static ChildEventListener onChildRemoved(Query self, Closure closure) {
         return self.addChildEventListener(
                 ChildEventListenerBuilder.create().onChildRemoved(closure).build()
