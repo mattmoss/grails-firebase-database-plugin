@@ -10,7 +10,7 @@ import java.util.concurrent.TimeoutException;
 
 public class TaskExtension {
 
-    public static <T> Task<T> onSuccess(Task<T> self, @NotNull Closure closure) {
+    public static <T> Task<T> onSuccess(Task<T> self, @NotNull final Closure closure) {
         self.addOnSuccessListener(new OnSuccessListener<T>() {
             @Override
             public void onSuccess(T t) {
@@ -20,7 +20,7 @@ public class TaskExtension {
         return self;
     }
 
-    public static <T> Task<T> onFailure(Task<T> self, @NotNull Closure closure) {
+    public static <T> Task<T> onFailure(Task<T> self, @NotNull final Closure closure) {
         self.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(Exception e) {
@@ -30,7 +30,7 @@ public class TaskExtension {
         return self;
     }
 
-    public static <T> Task<T> onComplete(Task<T> self, @NotNull Closure closure) {
+    public static <T> Task<T> onComplete(Task<T> self, @NotNull final Closure closure) {
         self.addOnCompleteListener(new OnCompleteListener<T>() {
             @Override
             public void onComplete(Task<T> task) {

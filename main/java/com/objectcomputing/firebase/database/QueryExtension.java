@@ -178,7 +178,7 @@ public class QueryExtension {
      * @return a Promise expected to receive the value of the snapshot at this location
      */
     public static Task<Object> getValue(Query self) {
-        TaskCompletionSource<Object> source = new TaskCompletionSource<>();
+        final TaskCompletionSource<Object> source = new TaskCompletionSource<>();
 
         self.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -197,7 +197,7 @@ public class QueryExtension {
         return source.getTask();
     }
 
-    public static void getValue(Query self, @NotNull Closure closure) {
+    public static void getValue(Query self, @NotNull final Closure closure) {
         self.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -220,8 +220,8 @@ public class QueryExtension {
      * @param valueType class into which snapshot value should be marshaled
      * @return a Promise expected to receive the value of the snapshot at this location
      */
-    public static <T> Task<T> getValue(Query self, Class<T> valueType) {
-        TaskCompletionSource<T> source = new TaskCompletionSource<>();
+    public static <T> Task<T> getValue(Query self, final Class<T> valueType) {
+        final TaskCompletionSource<T> source = new TaskCompletionSource<>();
 
         self.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -240,7 +240,7 @@ public class QueryExtension {
         return source.getTask();
     }
 
-    public static <T> void getValue(Query self, Class<T> valueType, @NotNull Closure closure) {
+    public static <T> void getValue(Query self, final Class<T> valueType, @NotNull final Closure closure) {
         self.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override

@@ -37,7 +37,7 @@ public class DatabaseReferenceExtension {
         return self;
     }
 
-    private static CompletionListener asCompletionListener(@NotNull Closure closure) {
+    private static CompletionListener asCompletionListener(@NotNull final Closure closure) {
         return new CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
@@ -46,19 +46,19 @@ public class DatabaseReferenceExtension {
         };
     }
 
-    public static void setPriority(DatabaseReference self, Object priority, @NotNull Closure closure) {
+    public static void setPriority(DatabaseReference self, Object priority, @NotNull final Closure closure) {
         self.setPriority(priority, asCompletionListener(closure));
     }
 
-    public static void setValue(DatabaseReference self, Object value, Object priority, @NotNull Closure closure) {
+    public static void setValue(DatabaseReference self, Object value, Object priority, @NotNull final Closure closure) {
         self.setValue(value, priority, asCompletionListener(closure));
     }
 
-    public static void setValue(DatabaseReference self, Object value, @NotNull Closure closure) {
+    public static void setValue(DatabaseReference self, Object value, @NotNull final Closure closure) {
         self.setValue(value, asCompletionListener(closure));
     }
 
-    public static void removeValue(DatabaseReference self, @NotNull Closure closure) {
+    public static void removeValue(DatabaseReference self, @NotNull final Closure closure) {
         self.removeValue(asCompletionListener(closure));
     }
 
@@ -66,19 +66,19 @@ public class DatabaseReferenceExtension {
         return self.child(pathString).removeValue();
     }
 
-    public static void remove(DatabaseReference self, String pathString, @NotNull Closure closure) {
+    public static void remove(DatabaseReference self, String pathString, @NotNull final Closure closure) {
         self.child(pathString).removeValue(asCompletionListener(closure));
     }
 
-    public static void updateChildren(DatabaseReference self, Map<String, Object> update, @NotNull Closure closure) {
+    public static void updateChildren(DatabaseReference self, Map<String, Object> update, @NotNull final Closure closure) {
         self.updateChildren(update, asCompletionListener(closure));
     }
 
-    public static Task<DataSnapshot> withTransaction(DatabaseReference self, Closure closure) {
+    public static Task<DataSnapshot> withTransaction(DatabaseReference self, @NotNull final Closure closure) {
         return withTransaction(self, true, closure);
     }
 
-    public static Task<DataSnapshot> withTransaction(DatabaseReference self, boolean fireLocalEvents, Closure closure) {
+    public static Task<DataSnapshot> withTransaction(DatabaseReference self, boolean fireLocalEvents, @NotNull final Closure closure) {
         final TaskCompletionSource<DataSnapshot> source = new TaskCompletionSource<>();
 
         self.runTransaction(new Transaction.Handler() {
