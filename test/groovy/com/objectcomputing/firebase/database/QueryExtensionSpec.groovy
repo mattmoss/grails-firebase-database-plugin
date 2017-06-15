@@ -1,11 +1,10 @@
-package com.objectcomputing.groovy
+package com.objectcomputing.firebase.database
 
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
-
 import spock.lang.Specification
 
 class QueryExtensionSpec extends Specification {
