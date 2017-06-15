@@ -1,6 +1,10 @@
 package grails.firebase.database.plugin
 
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseCredentials
+import com.google.firebase.database.FirebaseDatabase
 import grails.plugins.*
+import com.google.firebase.FirebaseOptions
 
 class GrailsFirebaseDatabasePluginGrailsPlugin extends Plugin {
 
@@ -13,10 +17,10 @@ class GrailsFirebaseDatabasePluginGrailsPlugin extends Plugin {
 
     // TODO Fill in these fields
     def title = "Grails Firebase Database Plugin" // Headline display name of the plugin
-    def author = "Your name"
-    def authorEmail = ""
+    def author = "Matthew Moss"
+    def authorEmail = "mossm@objectcomputing.com"
     def description = '''\
-Brief summary/description of the plugin.
+Provides access to the Firebase realtime database.
 '''
 
     // URL to the plugin's documentation
@@ -39,10 +43,29 @@ Brief summary/description of the plugin.
     // Online location of the plugin's browseable source code.
 //    def scm = [ url: "http://svn.codehaus.org/grails-plugins/" ]
 
-    Closure doWithSpring() { {->
-            // TODO Implement runtime spring config (optional)
+    Closure doWithSpring() { { ->
+        def config = grailsApplication.config['grails.plugin.firebase']
+
+        def databaseName = config['databaseName']
+        if (!databaseName) {
+            throw new IllegalArgumentException("Config 'grails.plugin.firebase.databaseName' required.")
         }
-    }
+
+        def databaseUrl = "https://${databaseName}.firebaseio.com"
+        Map authOverride = config['authOverride'] ?: [:]
+
+        def options = new FirebaseOptions.Builder().
+                setCredential(FirebaseCredentials.applicationDefault()).
+                setDatabaseUrl(databaseUrl).
+                setDatabaseAuthVariableOverride(authOverride).
+                build()
+        FirebaseApp.initializeApp(options)
+
+        firebaseDatabase(FirebaseDatabase) { bean ->
+            bean.factoryMethod = 'getInstance'
+            bean.scope = 'singleton'
+        }
+    } }
 
     void doWithDynamicMethods() {
         // TODO Implement registering dynamic methods to classes (optional)
