@@ -5,11 +5,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.NotNull;
+import com.google.firebase.tasks.Task;
+import com.google.firebase.tasks.TaskCompletionSource;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-
-import java.util.concurrent.ExecutionException;
 
 
 public class QueryExtension {
@@ -176,25 +177,40 @@ public class QueryExtension {
      * @param self Firebase database Query
      * @return a Promise expected to receive the value of the snapshot at this location
      */
-    public static Promise getValueAsync(Query self) {
-
-        Promise<Object> promise = new Promise<>();
+    public static Task<Object> getValue(Query self) {
+        TaskCompletionSource<Object> source = new TaskCompletionSource<>();
 
         self.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        promise.accept(dataSnapshot.getValue());
+                        source.setResult(dataSnapshot.getValue());
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        promise.accept(databaseError.toException());
+                        source.setException(databaseError.toException());
                     }
                 }
         );
 
-        return promise;
+        return source.getTask();
+    }
+
+    public static void getValue(Query self, @NotNull Closure closure) {
+        self.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        closure.call(null, dataSnapshot.getValue());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        closure.call(databaseError.toException(), null);
+                    }
+                }
+        );
     }
 
     /**
@@ -204,50 +220,40 @@ public class QueryExtension {
      * @param valueType class into which snapshot value should be marshaled
      * @return a Promise expected to receive the value of the snapshot at this location
      */
-    public static <T> Promise<T> getValueAsync(Query self, Class<T> valueType) {
-
-        Promise<T> promise = new Promise<>();
+    public static <T> Task<T> getValue(Query self, Class<T> valueType) {
+        TaskCompletionSource<T> source = new TaskCompletionSource<>();
 
         self.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        promise.accept(dataSnapshot.getValue(valueType));
+                        source.setResult(dataSnapshot.getValue(valueType));
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        promise.accept(databaseError.toException());
+                        source.setException(databaseError.toException());
                     }
                 }
         );
 
-        return promise;
+        return source.getTask();
     }
 
-    /**
-     * Get the value of this database query object. One-time read. Synchronous.
-     *
-     * @param self Firebase database Query
-     * @return a Promise expected to receive the value of the snapshot at this location
-     * @throws InterruptedException if the current thread was interrupted while waiting
-     * @throws ExecutionException if the computation threw an exception
-     */
-    public static Object getValue(Query self) throws InterruptedException, ExecutionException {
-        return getValueAsync(self).get();
-    }
+    public static <T> void getValue(Query self, Class<T> valueType, @NotNull Closure closure) {
+        self.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        closure.call(null, dataSnapshot.getValue(valueType));
+                    }
 
-    /**
-     * Get the value of this database query object. One-time read. Synchronous.
-     *
-     * @param self Firebase database Query
-     * @param valueType class into which snapshot value should be marshaled
-     * @return a Promise expected to receive the value of the snapshot at this location
-     * @throws InterruptedException if the current thread was interrupted while waiting
-     * @throws ExecutionException if the computation threw an exception
-     */
-    public static <T> T getValue(Query self, Class<T> valueType) throws InterruptedException, ExecutionException {
-        return getValueAsync(self, valueType).get();
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        closure.call(databaseError.toException(), null);
+                    }
+                }
+        );
     }
 
 }
