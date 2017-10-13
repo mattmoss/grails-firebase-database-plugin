@@ -1,6 +1,9 @@
 package com.objectcomputing.firebase.database
 
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.DatabaseReference.CompletionListener
 import spock.lang.Specification
 
 
@@ -16,7 +19,7 @@ class DatabaseReferenceExtensionSpec extends Specification {
             }
         }
 
-        when:
+        when: "ref['foo/bar']"
         DatabaseReference viaChild = mockRef.child("foo/bar")
         DatabaseReference viaGetAt = DatabaseReferenceExtension.getAt(mockRef, "foo/bar")
 
@@ -25,7 +28,7 @@ class DatabaseReferenceExtensionSpec extends Specification {
         viaChild.toString() == viaGetAt.toString()
     }
 
-    def 'test that leftShift() does the same as push().setValue()'() {
+    def 'test that leftShift() does the same work as push().setValue()'() {
         given:
         def mockRef = Mock(DatabaseReference) {
             2 * push() >> Mock(DatabaseReference) {
@@ -34,7 +37,7 @@ class DatabaseReferenceExtensionSpec extends Specification {
             }
         }
 
-        when:
+        when: "ref << 'foo' << 'bar'"
         def firstRef = DatabaseReferenceExtension.leftShift(mockRef, 'foo')
         def checkRef = DatabaseReferenceExtension.leftShift(firstRef, 'bar')
 
@@ -42,4 +45,66 @@ class DatabaseReferenceExtensionSpec extends Specification {
         firstRef.is mockRef
         checkRef.is mockRef
     }
+
+    def 'test that setPriority with closure can receive results via closure'() {
+        given:
+        def mockError = Mock(DatabaseError)
+        def mockRef = Mock(DatabaseReference)
+
+        1 * mockRef.setPriority(42, _) >> { Object priority, CompletionListener listener ->
+            listener.onComplete(mockError, mockRef)
+        }
+
+        when:
+        def result = null
+        mockRef.setPriority(42) { DatabaseError error, DatabaseReference dbRef ->
+            result = [error: error, dbRef: dbRef]
+        }
+
+        then:
+        result.error == mockError
+        result.dbRef == mockRef
+    }
+
+
+    def 'test that setValue with closure can receive results via closure'() {
+        given:
+        def mockError = Mock(DatabaseError)
+        def mockRef = Mock(DatabaseReference)
+
+        1 * mockRef.setValue('foobar', _) >> { Object value, CompletionListener listener ->
+            listener.onComplete(mockError, mockRef)
+        }
+
+        when:
+        def result = null
+        mockRef.setValue('foobar') { DatabaseError error, DatabaseReference dbRef ->
+            result = [error: error, dbRef: dbRef]
+        }
+
+        then:
+        result.error == mockError
+        result.dbRef == mockRef
+    }
+
+    def 'test that setValue w/priority with closure can receive results via closure'() {
+        given:
+        def mockError = Mock(DatabaseError)
+        def mockRef = Mock(DatabaseReference)
+
+        1 * mockRef.setValue('foobar', 42, _) >> { Object value, Object priority, CompletionListener listener ->
+            listener.onComplete(mockError, mockRef)
+        }
+
+        when:
+        def result = null
+        mockRef.setValue('foobar', 42) { DatabaseError error, DatabaseReference dbRef ->
+            result = [error: error, dbRef: dbRef]
+        }
+
+        then:
+        result.error == mockError
+        result.dbRef == mockRef
+    }
+
 }
