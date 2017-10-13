@@ -9,7 +9,7 @@ class DatabaseReferenceExtensionSpec extends Specification {
     def 'test that getAt() does the same as child()'() {
         given:
         def mockRef = Mock(DatabaseReference) {
-            child(_) >> { String pathString ->
+            2 * child('foo/bar') >> { String pathString ->
                 Mock(DatabaseReference) {
                     toString() >> "/base/${pathString}"
                 }
@@ -17,11 +17,11 @@ class DatabaseReferenceExtensionSpec extends Specification {
         }
 
         when:
-        def viaChild = mockRef.child("foo/bar")
-        def viaGetAt = DatabaseReferenceExtension.getAt(mockRef, "foo/bar")
+        DatabaseReference viaChild = mockRef.child("foo/bar")
+        DatabaseReference viaGetAt = DatabaseReferenceExtension.getAt(mockRef, "foo/bar")
 
-        then:
-        viaGetAt instanceof DatabaseReference
+        then: 'the references refer to the same child'
+        // (viaChild == viaGetAt) fails... doesn't call DatabaseReference.equals ???
         viaChild.toString() == viaGetAt.toString()
     }
 
@@ -38,7 +38,7 @@ class DatabaseReferenceExtensionSpec extends Specification {
         def firstRef = DatabaseReferenceExtension.leftShift(mockRef, 'foo')
         def checkRef = DatabaseReferenceExtension.leftShift(firstRef, 'bar')
 
-        then:
+        then: 'leftShift returns the reference operated on, not the child as push() does'
         firstRef.is mockRef
         checkRef.is mockRef
     }

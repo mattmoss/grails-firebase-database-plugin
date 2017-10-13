@@ -9,6 +9,7 @@ import com.google.firebase.database.annotations.NotNull;
 import com.google.firebase.tasks.Task;
 import com.google.firebase.tasks.TaskCompletionSource;
 
+import com.objectcomputing.firebase.tasks.TaskExtension;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 
@@ -78,7 +79,8 @@ public class QueryExtension {
      * @param self Firebase database Query
      * @param closure Groovy Closure
      * @return a Firebase database ChildEventListener
-     */    public static ChildEventListener addChildEventListener(
+     */
+    public static ChildEventListener addChildEventListener(
             Query self,
             @DelegatesTo(ChildEventListenerBuilder.class) Closure closure
     ) {
@@ -91,6 +93,7 @@ public class QueryExtension {
      * Attach a value event listener to this database query object.
      * This listener only listens for the onDataChange event.
      * Note the slight name change at this higher level. (onValueChanged)
+     *
      * Provide return value to removeEventListener to detach the listener.
      *
      * <pre>
@@ -114,7 +117,8 @@ public class QueryExtension {
     /**
      * Attach a child event listener to this database query object.
      * This listener only listens for the onChildAdded event.
-     * Provide return value to removeEventListener to detach the listener.\
+     *
+     * Provide return value to removeEventListener to detach the listener.
      *
      * @param self Firebase database Query
      * @param closure Groovy closure
@@ -129,7 +133,8 @@ public class QueryExtension {
     /**
      * Attach a child event listener to this database query object.
      * This listener only listens for the onChildChanged event.
-     * Provide return value to removeEventListener to detach the listener.\
+     *
+     * Provide return value to removeEventListener to detach the listener.
      *
      * @param self Firebase database Query
      * @param closure Groovy closure
@@ -144,7 +149,8 @@ public class QueryExtension {
     /**
      * Attach a child event listener to this database query object.
      * This listener only listens for the onChildMoved event.
-     * Provide return value to removeEventListener to detach the listener.\
+     *
+     * Provide return value to removeEventListener to detach the listener.
      *
      * @param self Firebase database Query
      * @param closure Groovy closure
@@ -159,7 +165,7 @@ public class QueryExtension {
     /**
      * Attach a child event listener to this database query object.
      * This listener only listens for the onChildRemoved event.
-     * Provide return value to removeEventListener to detach the listener.\
+     * Provide return value to removeEventListener to detach the listener.
      *
      * @param self Firebase database Query
      * @param closure Groovy closure
@@ -197,20 +203,14 @@ public class QueryExtension {
         return source.getTask();
     }
 
+    /**
+     * Get the value of this database query object. One-time read. Asynchronous.
+     *
+     * @param self Firebase database Query
+     * @param closure Groovy closure { Exception ex, value -> ... } called when complete
+     */
     public static void getValue(Query self, @NotNull final Closure closure) {
-        self.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        closure.call(null, dataSnapshot.getValue());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        closure.call(databaseError.toException(), null);
-                    }
-                }
-        );
+        TaskExtension.onComplete(getValue(self), closure);
     }
 
     /**
@@ -240,20 +240,15 @@ public class QueryExtension {
         return source.getTask();
     }
 
+    /**
+     * Get the value of this database query object. One-time read. Asynchronous.
+     *
+     * @param self Firebase database Query
+     * @param valueType class into which snapshot value should be marshaled
+     * @param closure Groovy closure { Exception ex, value -> ... } called when complete
+     */
     public static <T> void getValue(Query self, final Class<T> valueType, @NotNull final Closure closure) {
-        self.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        closure.call(null, dataSnapshot.getValue(valueType));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        closure.call(databaseError.toException(), null);
-                    }
-                }
-        );
+        TaskExtension.onComplete(getValue(self, valueType), closure);
     }
 
 }
