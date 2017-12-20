@@ -92,12 +92,11 @@ public class QueryExtension {
     /**
      * Attach a value event listener to this database query object.
      * This listener only listens for the onDataChange event.
-     * Note the slight name change at this higher level. (onValueChanged)
      *
      * Provide return value to removeEventListener to detach the listener.
      *
      * <pre>
-     *     def listener = query.onValueChanged { DataSnapshot snapshot ->
+     *     def listener = query.onDataChange { DataSnapshot snapshot ->
      *         //...
      *     }
      *
@@ -108,7 +107,7 @@ public class QueryExtension {
      * @param closure Groovy closure
      * @return a Firebase database ValueEventListener
      */
-    public static ValueEventListener onValueChanged(Query self, Closure closure) {
+    public static ValueEventListener onDataChange(Query self, Closure closure) {
         return self.addValueEventListener(
                 ValueEventListenerBuilder.create().onDataChange(closure).build()
         );

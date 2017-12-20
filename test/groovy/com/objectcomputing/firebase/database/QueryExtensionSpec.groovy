@@ -43,7 +43,7 @@ class QueryExtensionSpec extends Specification {
 
         when:
         def result = null
-        def listener = QueryExtension.onValueChanged(mockQuery) { DataSnapshot snapshot ->
+        def listener = QueryExtension.onDataChange(mockQuery) { DataSnapshot snapshot ->
             result = snapshot
         }
 
