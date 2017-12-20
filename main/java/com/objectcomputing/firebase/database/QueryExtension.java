@@ -6,10 +6,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.NotNull;
-import com.google.firebase.tasks.Task;
-import com.google.firebase.tasks.TaskCompletionSource;
 
-import com.objectcomputing.firebase.tasks.TaskExtension;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 
@@ -180,63 +177,22 @@ public class QueryExtension {
      * Get the value of this database query object. One-time read. Asynchronous.
      *
      * @param self Firebase database Query
-     * @return a Promise expected to receive the value of the snapshot at this location
-     */
-    public static Task<Object> getValue(Query self) {
-        final TaskCompletionSource<Object> source = new TaskCompletionSource<>();
-
-        self.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        source.setResult(dataSnapshot.getValue());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        source.setException(databaseError.toException());
-                    }
-                }
-        );
-
-        return source.getTask();
-    }
-
-    /**
-     * Get the value of this database query object. One-time read. Asynchronous.
-     *
-     * @param self Firebase database Query
      * @param closure Groovy closure { Exception ex, value -> ... } called when complete
      */
     public static void getValue(Query self, @NotNull final Closure closure) {
-        TaskExtension.onComplete(getValue(self), closure);
-    }
-
-    /**
-     * Get the value of this database query object. One-time read. Asynchronous.
-     *
-     * @param self Firebase database Query
-     * @param valueType class into which snapshot value should be marshaled
-     * @return a Promise expected to receive the value of the snapshot at this location
-     */
-    public static <T> Task<T> getValue(Query self, final Class<T> valueType) {
-        final TaskCompletionSource<T> source = new TaskCompletionSource<>();
-
         self.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        source.setResult(dataSnapshot.getValue(valueType));
+                    public void onDataChange(DataSnapshot snapshot) {
+                        closure.call(null, snapshot.getValue());
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        source.setException(databaseError.toException());
+                    public void onCancelled(DatabaseError error) {
+                        closure.call(error.toException(), null);
                     }
                 }
         );
-
-        return source.getTask();
     }
 
     /**
@@ -247,7 +203,19 @@ public class QueryExtension {
      * @param closure Groovy closure { Exception ex, value -> ... } called when complete
      */
     public static <T> void getValue(Query self, final Class<T> valueType, @NotNull final Closure closure) {
-        TaskExtension.onComplete(getValue(self, valueType), closure);
+        self.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        closure.call(dataSnapshot.getValue(valueType));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        closure.call(databaseError.toException());
+                    }
+                }
+        );
     }
 
 }
