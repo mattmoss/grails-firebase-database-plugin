@@ -83,12 +83,12 @@ class ChildEventListenerBuilder {
         return new ChildEventListenerBuilder();
     }
 
-    static ChildEventListener create(@DelegatesTo(ChildEventListenerBuilder.class) Closure closure) {
+    static ChildEventListenerBuilder create(@DelegatesTo(ChildEventListenerBuilder.class) Closure closure) {
         ChildEventListenerBuilder builder = create();
 
         closure.setDelegate(builder);
         closure.call();
 
-        return builder.build();
+        return builder;
     }
 }

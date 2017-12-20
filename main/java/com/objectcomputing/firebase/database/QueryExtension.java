@@ -85,7 +85,7 @@ public class QueryExtension {
             @DelegatesTo(ChildEventListenerBuilder.class) Closure closure
     ) {
         return self.addChildEventListener(
-                ChildEventListenerBuilder.create(closure)
+                ChildEventListenerBuilder.create(closure).build()
         );
     }
 
