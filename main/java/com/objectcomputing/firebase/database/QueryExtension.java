@@ -44,7 +44,7 @@ public class QueryExtension {
             @DelegatesTo(ValueEventListenerBuilder.class) Closure closure
     ) {
         return self.addValueEventListener(
-                ValueEventListenerBuilder.create(closure)
+                ValueEventListenerBuilder.create(closure).build()
         );
     }
 

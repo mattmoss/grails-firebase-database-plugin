@@ -44,12 +44,12 @@ class ValueEventListenerBuilder {
         return new ValueEventListenerBuilder();
     }
 
-    static ValueEventListener create(@DelegatesTo(ValueEventListenerBuilder.class) Closure closure) {
+    static ValueEventListenerBuilder create(@DelegatesTo(ValueEventListenerBuilder.class) Closure closure) {
         ValueEventListenerBuilder builder = create();
 
         closure.setDelegate(builder);
         closure.call();
 
-        return builder.build();
+        return builder;
     }
 }
