@@ -1,5 +1,6 @@
 package com.objectcomputing.firebase.database;
 
+import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseReference.CompletionListener;
@@ -7,8 +8,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.annotations.NotNull;
-import com.google.firebase.tasks.Task;
-import com.google.firebase.tasks.TaskCompletionSource;
 
 import groovy.lang.Closure;
 
@@ -30,13 +29,15 @@ public class DatabaseReferenceExtension {
     /**
      * Provide leftShift method (i.e. << operator) to alias .push().setValue().
      * Returns the target DatabaseReference so multiple leftShift calls can be chained.
+     * Access to the asynchronous task is not available, so completion/error notices
+     * will go unnoticed.
      *
      * @param self Firebase database DatabaseReference
      * @param value the value to set on a newly created child
      * @return the parent DatabaseReference (that on which leftShift was used)
      */
     public static DatabaseReference leftShift(DatabaseReference self, Object value) {
-        self.push().setValue(value);
+        self.push().setValueAsync(value);
         return self;
     }
 
@@ -90,8 +91,8 @@ public class DatabaseReferenceExtension {
      * @param self Firebase database DatabaseReference
      * @param pathString relative path from provided reference to descendant reference
      */
-    public static Task<Void> remove(DatabaseReference self, String pathString) {
-        return self.child(pathString).removeValue();
+    public static ApiFuture<Void> remove(DatabaseReference self, String pathString) {
+        return self.child(pathString).removeValueAsync();
     }
 
     /**
@@ -125,11 +126,15 @@ public class DatabaseReferenceExtension {
      * to true.
      *
      * @param self Firebase database DatabaseReference
-     * @param closure the Groovy closure { } called to modify data within a transaction
-     * @return Firebase async task object: can be used to detect when transaction completes or fails
+     * @param handler the Groovy Closure { MutableData -> } called to modify data within a transaction
+     * @param complete the Groovy Closure { DatabaseError, DataSnapshot -> } called when transaction is complete
      */
-    public static Task<DataSnapshot> withTransaction(DatabaseReference self, @NotNull final Closure closure) {
-        return withTransaction(self, true, closure);
+    public static void withTransaction(
+            DatabaseReference self,
+            @NotNull final Closure handler,
+            final Closure complete
+    ) {
+        withTransaction(self, true, handler, complete);
     }
 
     /**
@@ -138,18 +143,20 @@ public class DatabaseReferenceExtension {
      * same transaction. Be careful of any side effects or state within the closure.
      *
      * @param self Firebase database DatabaseReference
-     * @param closure the Groovy closure { } called to modify data within a transaction
-     * @return Firebase async task object: can be used to detect when transaction completes or fails
+     * @param handler the Groovy Closure { MutableData -> } called to modify data within a transaction
+     * @param complete the Groovy Closure { DatabaseError, DataSnapshot -> } called when transaction is complete
      */
-    public static Task<DataSnapshot> withTransaction(DatabaseReference self, boolean fireLocalEvents,
-                                                     @NotNull final Closure closure) {
-        final TaskCompletionSource<DataSnapshot> source = new TaskCompletionSource<>();
-
+    public static void withTransaction(
+            DatabaseReference self,
+            final boolean fireLocalEvents,
+            @NotNull final Closure handler,
+            final Closure complete
+    ) {
         self.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 // If call throws an exception, the transaction will abort().
-                Object result = closure.call(mutableData);
+                Object result = handler.call(mutableData);
 
                 if (result instanceof Transaction.Result) {
                     // Return result as-is if closure returned success/abort.
@@ -174,15 +181,13 @@ public class DatabaseReferenceExtension {
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData) {
                 if (databaseError == null) {
-                    source.setResult(currentData);
+                    complete.call(null, currentData);
                 }
                 else {
-                    source.setException(databaseError.toException());
+                    complete.call(databaseError, null);
                 }
             }
         }, fireLocalEvents);
-
-        return source.getTask();
     }
 
     private static CompletionListener closureAsCompletionListener(@NotNull final Closure closure) {

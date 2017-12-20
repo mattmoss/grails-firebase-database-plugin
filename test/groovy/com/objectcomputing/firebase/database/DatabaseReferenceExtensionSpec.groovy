@@ -32,8 +32,8 @@ class DatabaseReferenceExtensionSpec extends Specification {
         given:
         def mockRef = Mock(DatabaseReference) {
             2 * push() >> Mock(DatabaseReference) {
-                1 * setValue('foo')
-                1 * setValue('bar')
+                1 * setValueAsync('foo')
+                1 * setValueAsync('bar')
             }
         }
 
