@@ -1,0 +1,4 @@
+# File: src/main/resources/META-INF/services/org.codehaus.groovy.runtime.ExtensionModule
+moduleName = groovy-firebase-database-extension-module
+moduleVersion = 0.1
+extensionClasses = com.objectcomputing.firebase.database.QueryExtension,com.objectcomputing.firebase.database.DatabaseReferenceExtension

@@ -1,0 +1,39 @@
+group = 'com.objectcomputing.firebase'
+version = '0.1'
+
+apply plugin: 'java-library'
+apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    // These dependencies are exported to consumers, that is to say found on
+    // their compile classpath.
+    api 'com.google.firebase:firebase-admin:5.6.0'
+
+    // These dependencies are used internally, and not exposed to consumers
+    // on their own compile classpath.
+    implementation 'com.google.guava:guava:21.0'
+    implementation 'org.codehaus.groovy:groovy-all:2.4.10'
+    
+    // Use the awesome Spock testing and specification framework even with Java
+    testImplementation 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'cglib:cglib-nodep:3.2.5'
+    testImplementation 'org.objenesis:objenesis:2.5.1'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
