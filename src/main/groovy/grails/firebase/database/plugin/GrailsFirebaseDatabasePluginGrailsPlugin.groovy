@@ -1,10 +1,10 @@
 package grails.firebase.database.plugin
 
 import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseCredentials
 import com.google.firebase.database.FirebaseDatabase
-import grails.plugins.*
-import com.google.firebase.FirebaseOptions
+import grails.plugins.Plugin
 
 class GrailsFirebaseDatabasePluginGrailsPlugin extends Plugin {
 
