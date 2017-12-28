@@ -1,7 +1,7 @@
 package grails.firebase.database.plugin
 
 import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
+import com.google.firebase.auth.FirebaseCredential
 import com.google.firebase.auth.FirebaseCredentials
 import com.google.firebase.database.FirebaseDatabase
 import grails.plugins.Plugin
@@ -54,8 +54,11 @@ Provides access to the Firebase realtime database.
         def databaseUrl = "https://${databaseName}.firebaseio.com"
         Map authOverride = config['authOverride'] ?: [:]
 
+        // TODO Permit configuration of credentials (this currently assumes GCP).
+        FirebaseCredential credentials = FirebaseCredentials.applicationDefault()
+
         def options = new FirebaseOptions.Builder().
-                setCredential(FirebaseCredentials.applicationDefault()).
+                setCredential(credentials).
                 setDatabaseUrl(databaseUrl).
                 setDatabaseAuthVariableOverride(authOverride).
                 build()
