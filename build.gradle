@@ -54,3 +54,11 @@ grailsPublish {
     portalUser = ""
     portalPassword = ""    
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
