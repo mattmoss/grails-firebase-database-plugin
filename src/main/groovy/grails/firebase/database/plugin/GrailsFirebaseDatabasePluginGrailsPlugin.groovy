@@ -1,8 +1,8 @@
 package grails.firebase.database.plugin
 
+import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseCredential
-import com.google.firebase.auth.FirebaseCredentials
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.database.FirebaseDatabase
 import grails.plugins.Plugin
 
@@ -29,19 +29,19 @@ Provides access to the Firebase realtime database.
     // Extra (optional) plugin metadata
 
     // License: one of 'APACHE', 'GPL2', 'GPL3'
-//    def license = "APACHE"
+    // def license = "APACHE"
 
     // Details of company behind the plugin (if there is one)
-//    def organization = [ name: "My Company", url: "http://www.my-company.com/" ]
+    // def organization = [ name: "My Company", url: "http://www.my-company.com/" ]
 
     // Any additional developers beyond the author specified above.
-//    def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
+    // def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
 
     // Location of the plugin's issue tracker.
-//    def issueManagement = [ system: "JIRA", url: "http://jira.grails.org/browse/GPMYPLUGIN" ]
+    // def issueManagement = [ system: "JIRA", url: "http://jira.grails.org/browse/GPMYPLUGIN" ]
 
     // Online location of the plugin's browseable source code.
-//    def scm = [ url: "http://svn.codehaus.org/grails-plugins/" ]
+    // def scm = [ url: "http://svn.codehaus.org/grails-plugins/" ]
 
     Closure doWithSpring() { { ->
         def config = grailsApplication.config['grails.plugin.firebase']
@@ -55,10 +55,10 @@ Provides access to the Firebase realtime database.
         Map authOverride = config['authOverride'] ?: [:]
 
         // TODO Permit configuration of credentials (this currently assumes GCP).
-        FirebaseCredential credentials = FirebaseCredentials.applicationDefault()
+        GoogleCredentials credentials = GoogleCredentials.applicationDefault
 
         def options = new FirebaseOptions.Builder().
-                setCredential(credentials).
+                setCredentials(credentials).
                 setDatabaseUrl(databaseUrl).
                 setDatabaseAuthVariableOverride(authOverride).
                 build()
