@@ -31,7 +31,7 @@ dependencies {
     provided "org.grails:grails-plugin-domain-class"
     testCompile "org.grails:grails-plugin-testing"
 
-    compile 'com.objectcomputing.firebase:groovy-firebase-database-extension-module:0.1'
+    compile project(':groovy-firebase-database-extension-module')
 }
 
 bootRun {
