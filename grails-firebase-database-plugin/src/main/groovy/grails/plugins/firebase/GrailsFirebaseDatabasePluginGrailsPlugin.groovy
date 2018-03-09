@@ -1,4 +1,4 @@
-package grails.firebase.database.plugin
+package grails.plugins.firebase
 
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp

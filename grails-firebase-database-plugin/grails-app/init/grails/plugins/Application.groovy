@@ -1,4 +1,4 @@
-package grails.firebase.database.plugin
+package grails.plugins
 
 import grails.boot.*
 import grails.boot.config.GrailsAutoConfiguration
