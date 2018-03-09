@@ -3,7 +3,7 @@ import { ListGroup, ListGroupItem } from 'react-bootstrap';
 
 const ChannelListView = ({ channels }) => (
     <ListGroup>
-        {channels.map(({ key, name, topic }) =>
+        {channels.map(({ key, name }) =>
             <ListGroupItem key={key}># {name}</ListGroupItem>
         )}
     </ListGroup>
