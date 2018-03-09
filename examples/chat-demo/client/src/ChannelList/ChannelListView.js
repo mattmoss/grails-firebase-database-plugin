@@ -1,11 +1,12 @@
 import React from 'react';
+import { ListGroup, ListGroupItem } from 'react-bootstrap';
 
 const ChannelListView = ({ channels }) => (
-    <ul>
+    <ListGroup>
         {channels.map(({ key, name, topic }) =>
-            <li key={key}>{name} - {topic}</li>
+            <ListGroupItem key={key} header={'#' + name}></ListGroupItem>
         )}
-    </ul>
+    </ListGroup>
 );
 
 export default ChannelListView;
