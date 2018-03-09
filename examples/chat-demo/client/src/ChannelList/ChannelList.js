@@ -3,8 +3,9 @@ import firebase from '../firebase';
 import ChannelListView from './ChannelListView';
 
 class ChannelList extends React.Component {
-    constructor() {
-        super();
+
+    constructor(props) {
+        super(props);
         this.state = { channels: [] };
     }
 
@@ -20,8 +21,13 @@ class ChannelList extends React.Component {
     }
 
     render() {
-        return <ChannelListView channels={this.state.channels} />;
+        const selectChannel = channel => this.props.onSelectChannel(channel);
+
+        return <ChannelListView channels={this.state.channels}
+                                active={this.props.active}
+                                onSelectChannel={selectChannel} />;
     }
+
 }
 
 export default ChannelList;
