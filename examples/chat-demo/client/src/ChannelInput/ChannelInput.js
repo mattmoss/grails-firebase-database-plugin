@@ -1,4 +1,5 @@
 import React from 'react';
+import firebase from '../firebase';
 import ChannelInputView from './ChannelInputView';
 
 class ChannelInput extends React.Component {
@@ -12,16 +13,29 @@ class ChannelInput extends React.Component {
 
     }
 
+    sendMessage() {
+        firebase.database().ref(`incoming/${this.props.channel.name}`).push({
+            author: 'foobar',
+            message: this.state.message.trim(),
+            timestamp: Date.now()
+        }).then(
+            value => {
+                this.setState({ message: '' });
+            },
+            error => {
+                console.error('Error while sending message:', error);
+            }
+        );
+    }
+
     render() {
         const editMessage = message => this.setState({ message });
-
-        const sendMessage = () => { console.log('Send message:' + this.state.message); };
 
         return this.props.channel ?
             <ChannelInputView message={this.state.message}
                               channel={this.props.channel}
                               onChange={editMessage}
-                              onSubmit={sendMessage} /> :
+                              onSubmit={() => this.sendMessage()} /> :
             null;
     }
 
