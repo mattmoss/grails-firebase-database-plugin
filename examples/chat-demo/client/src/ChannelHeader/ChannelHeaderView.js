@@ -3,7 +3,7 @@ import { PageHeader } from 'react-bootstrap';
 
 const ChannelHeaderView = ({ channel }) => (
     <PageHeader>
-        # {channel.name}<br />
+        #{channel.name}<br />
         <small>Topic: {channel.topic}</small>
     </PageHeader>
 );

@@ -1,17 +1,18 @@
 import React from 'react';
 import { ListGroup, ListGroupItem } from 'react-bootstrap';
 
-const ChannelListView = ({ channels, active, onSelectChannel }) => {
+const ChannelListView = ({ channels, active, onSelect }) => {
 
-    const selectChannel = channel => () => onSelectChannel(channel);
+    const isActive = channel => (active && active.key === channel.key);
+    const selectChannel = channel => () => onSelect(channel);
 
     return (
         <ListGroup>
             {channels.map(channel =>
                 <ListGroupItem key={channel.key}
                                onClick={selectChannel(channel)}
-                               active={channel.key === active.key}>
-                    # {channel.name}
+                               active={isActive(channel)}>
+                    #{channel.name}
                 </ListGroupItem>
             )}
         </ListGroup>

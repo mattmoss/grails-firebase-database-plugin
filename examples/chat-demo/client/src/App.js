@@ -1,13 +1,14 @@
 import React from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
 import ChannelList from './ChannelList/ChannelList';
-import ChannelHeader from "./ChannelHeader/ChannelHeader";
+import ChannelHeader from './ChannelHeader/ChannelHeader';
+import ChannelInput from './ChannelInput/ChannelInput';
 
 class App extends React.Component {
 
     constructor() {
         super();
-        this.state = { active: {} };
+        this.state = { active: null };
     }
 
     render() {
@@ -18,11 +19,13 @@ class App extends React.Component {
                 <Row>
                     <Col sm={2}>
                         <ChannelList active={this.state.active}
-                                     onSelectChannel={selectChannel} />
+                                     onSelect={selectChannel} />
                     </Col>
                     <Col sm={8}>
                         <div>
                             <ChannelHeader channel={this.state.active} />
+                            {/*<ChannelChat />*/}
+                            <ChannelInput channel={this.state.active} />
                         </div>
                     </Col>
                     <Col sm={2}>

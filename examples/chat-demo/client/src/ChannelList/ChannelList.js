@@ -21,11 +21,11 @@ class ChannelList extends React.Component {
     }
 
     render() {
-        const selectChannel = channel => this.props.onSelectChannel(channel);
+        const selectChannel = channel => this.props.onSelect(channel);
 
         return <ChannelListView channels={this.state.channels}
                                 active={this.props.active}
-                                onSelectChannel={selectChannel} />;
+                                onSelect={selectChannel} />;
     }
 
 }

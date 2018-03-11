@@ -7,7 +7,9 @@ class ChannelHeader extends React.Component {
     }
 
     render() {
-        return <ChannelHeaderView channel={this.props.channel} />;
+        return this.props.channel ?
+            <ChannelHeaderView channel={this.props.channel} /> :
+            null;
     }
 }
 
