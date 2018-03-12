@@ -4,14 +4,9 @@ import ChannelInputView from './ChannelInputView';
 
 class ChannelInput extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = { message: '' };
-    }
-
-    componentDidMount() {
-
-    }
+    state = {
+        message: ''
+    };
 
     sendMessage() {
         firebase.database().ref(`incoming/${this.props.channel.name}`).push({
@@ -19,7 +14,7 @@ class ChannelInput extends React.Component {
             message: this.state.message.trim(),
             timestamp: Date.now()
         }).then(
-            value => {
+            () => {
                 this.setState({ message: '' });
             },
             error => {

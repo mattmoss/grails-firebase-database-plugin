@@ -6,10 +6,9 @@ import ChannelInput from './ChannelInput/ChannelInput';
 
 class App extends React.Component {
 
-    constructor() {
-        super();
-        this.state = { active: null };
-    }
+    state = {
+        active: null
+    };
 
     render() {
         const selectChannel = channel => this.setState({ active: channel });

@@ -4,10 +4,9 @@ import ChannelListView from './ChannelListView';
 
 class ChannelList extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = { channels: [] };
-    }
+    state = {
+        channels: []
+    };
 
     componentDidMount() {
         const channelsRef = firebase.database().ref('channels').orderByChild('name');
