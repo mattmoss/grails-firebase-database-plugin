@@ -139,3 +139,23 @@ a:hover {
 button {
     outline: none;
 }
+
+#chatMessages {
+    border: thin solid #DFDFDF;
+    height: 60vh;
+    overflow: auto;
+    padding: 0;
+    margin-bottom: 20px;
+    font-family: "Consolas", "Monaco", "Courier New", Courier, monospace;
+}
+
+#chatMessages table {
+    border: none;
+    margin: 0;
+}
+
+#chatMessages td {
+    line-height: 1em;
+    padding: 0.2em 0.5em;
+    border: none;
+}
