@@ -38,7 +38,7 @@ class App extends React.Component {
                 <Grid>
                     <Row>
                         <Col>
-                            <h1 class="text-center">Grails/Firebase Chat Demo</h1>
+                            <h1 className="text-center">Grails/Firebase Chat Demo</h1>
                             <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
                         </Col>
                     </Row>
@@ -53,13 +53,13 @@ class App extends React.Component {
                     <Row>
                         <Col sm={2}>
                             <ChannelList active={this.state.active}
-                                         onSelect={selectChannel}/>
+                                         onSelect={selectChannel} />
                         </Col>
                         <Col sm={8}>
                             <div>
-                                <ChannelHeader channel={this.state.active}/>
+                                <ChannelHeader channel={this.state.active} />
                                 {/*<ChannelChat />*/}
-                                <ChannelInput channel={this.state.active}/>
+                                <ChannelInput channel={this.state.active} />
                             </div>
                         </Col>
                         <Col sm={2}>
