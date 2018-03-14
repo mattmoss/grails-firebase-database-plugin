@@ -5,6 +5,7 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import ChannelList from './ChannelList/ChannelList';
 import ChannelHeader from './ChannelHeader/ChannelHeader';
 import ChannelInput from './ChannelInput/ChannelInput';
+import ChannelMessages from './ChannelMessages/ChannelMessages';
 
 const uiConfig = {
     signInFlow: 'popup',
@@ -58,7 +59,7 @@ class App extends React.Component {
                         <Col sm={8}>
                             <div>
                                 <ChannelHeader channel={this.state.active} />
-                                {/*<ChannelChat />*/}
+                                <ChannelMessages channel={this.state.active} />
                                 <ChannelInput channel={this.state.active} />
                             </div>
                         </Col>
