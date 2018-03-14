@@ -4,10 +4,13 @@ import { Button, FormControl, FormGroup, InputGroup } from 'react-bootstrap';
 const ChannelInputView = ({ channel, message, onChange, onSubmit }) => {
 
     const editMessage = event => onChange(event.target.value);
-    const sendMessage = event => onSubmit();
+    const sendMessage = event => {
+        onSubmit();
+        event.preventDefault();
+    };
 
     return (
-        <form>
+        <form onSubmit={sendMessage}>
             <FormGroup>
                 <InputGroup>
                     <FormControl type="text"
