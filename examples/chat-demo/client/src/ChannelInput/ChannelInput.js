@@ -1,3 +1,4 @@
+
 import React from 'react';
 import firebase from '../firebase';
 import ChannelInputView from './ChannelInputView';
@@ -9,7 +10,7 @@ class ChannelInput extends React.Component {
     };
 
     sendMessage() {
-        firebase.database().ref(`incoming/${this.props.channel.name}`).push({
+        firebase.database().ref(`incoming/${this.props.channel.key}`).push({
             author: 'foobar',
             message: this.state.message.trim(),
             timestamp: Date.now()
