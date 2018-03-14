@@ -32,5 +32,7 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
         }
     }
     logger("StackTrace", ERROR, ['FULL_STACKTRACE'], false)
+
+    logger('chat.demo', INFO, ['STDOUT'], false)
 }
 root(ERROR, ['STDOUT'])
