@@ -1,0 +1,6 @@
+The Firebase Realtime Database is a JSON-document database, hosted in the cloud, that is
+synchronized to all connected clients with extremely low latency. For more information,
+read the https://firebase.google.com/docs/database/[Firebase Realtime Database Introduction].
+
+The Grails Firebase Database plugin provides access to the Firebase realtime database
+in your application using simple configuration and an improved API via Groovy closures.
