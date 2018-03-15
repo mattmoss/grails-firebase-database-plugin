@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Row, Col, PageHeader } from 'react-bootstrap';
+import { Grid, Row, Col, Button, PageHeader } from 'react-bootstrap';
 import firebase from 'firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import ChannelList from './ChannelList/ChannelList';
@@ -65,13 +65,11 @@ class App extends React.Component {
                             </div>
                         </Col>
                         <Col sm={2}>
+                            <PageHeader><strong>You</strong></PageHeader>
+                            <Button bsStyle="danger" onClick={() => firebase.auth().signOut()}>Sign-Out</Button>
+
                             <PageHeader><strong>Members</strong></PageHeader>
-                            <div></div>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
-                            <a onClick={() => firebase.auth().signOut()}>Sign-Out</a>
+                            <div>Members go here.</div>
                         </Col>
                     </Row>
                 </Grid>
