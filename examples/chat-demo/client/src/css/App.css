@@ -4,6 +4,10 @@
     font-size: 1.2em;
 }
 
+.row {
+    max-width: 100% !important;
+}
+
 button {
     outline: none;
 }
