@@ -9,13 +9,12 @@ button {
 }
 
 button.list-group-item {
-    padding: 0.3em 0.5em;
     font-weight: bold;
 }
 
 #chatMessages {
     border: thin solid #DFDFDF;
-    height: 60vh;
+    height: 70vh;
     overflow: auto;
     padding: 0;
     margin-bottom: 20px;
