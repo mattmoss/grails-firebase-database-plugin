@@ -36,9 +36,14 @@ class ChannelMessages extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.ignoreChannel(this.props.channel);
-        this.clearMessages();
-        this.listenChannel(nextProps.channel);
+        const prevChannel = (this.props.channel || {}).key;
+        const nextChannel = (nextProps.channel || {}).key;
+
+        if (nextChannel !== prevChannel) {
+            this.ignoreChannel(this.props.channel);
+            this.clearMessages();
+            this.listenChannel(nextProps.channel);
+        }
     }
 
     render() {
