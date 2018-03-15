@@ -3,7 +3,11 @@ import { PageHeader } from 'react-bootstrap';
 
 const ChannelHeaderView = ({ channel }) => (
     <PageHeader>
-        <strong>#{channel.name}</strong> [ <i>{channel.topic}</i> ]
+        <strong>
+            {channel ? '#' + channel.name : '' }
+        </strong> [ <i>
+            {channel ? channel.topic : 'Select a channel from the list at left.'}
+        </i> ]
     </PageHeader>
 );
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Grid, Row, Col, PageHeader } from 'react-bootstrap';
 import firebase from 'firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import ChannelList from './ChannelList/ChannelList';
@@ -53,17 +53,20 @@ class App extends React.Component {
                 <Grid>
                     <Row>
                         <Col sm={2}>
+                            <PageHeader><strong>Channels</strong></PageHeader>
                             <ChannelList active={this.state.active}
                                          onSelect={selectChannel} />
                         </Col>
                         <Col sm={8}>
                             <div>
+
                                 <ChannelHeader channel={this.state.active} />
                                 <ChannelMessages channel={this.state.active} />
                                 <ChannelInput channel={this.state.active} />
                             </div>
                         </Col>
                         <Col sm={2}>
+                            <PageHeader><strong>Members</strong></PageHeader>
                             <div></div>
                         </Col>
                     </Row>
