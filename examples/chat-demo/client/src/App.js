@@ -23,20 +23,24 @@ const uiConfig = {
 class App extends React.Component {
 
     state = {
-        signedIn: false,
-        active: null
+        active: null,
+        user: null,
     };
 
     componentDidMount() {
-        firebase.auth().onAuthStateChanged(user =>
-            this.setState({ signedIn: !!user })
-        );
+        firebase.auth().onAuthStateChanged(user => {
+            this.setState({ user });
+            if (!!user) {
+                console.log('User', user.displayName);
+                console.log('UID', user.uid);
+            }
+        });
     }
 
     render() {
-        if (!this.state.signedIn) {
+        if (!this.state.user) {
             return (
-                <Grid>
+                <Grid fluid>
                     <Row>
                         <Col>
                             <h1 className="text-center">Grails/Firebase Chat Demo</h1>
@@ -50,7 +54,7 @@ class App extends React.Component {
             const selectChannel = channel => this.setState({active: channel});
 
             return (
-                <Grid>
+                <Grid fluid>
                     <Row>
                         <Col sm={2}>
                             <PageHeader><strong>Channels</strong></PageHeader>
@@ -65,10 +69,13 @@ class App extends React.Component {
                             </div>
                         </Col>
                         <Col sm={2}>
-                            <PageHeader><strong>You</strong></PageHeader>
-                            <Button bsStyle="danger" onClick={() => firebase.auth().signOut()}>Sign-Out</Button>
-
-                            <PageHeader><strong>Members</strong></PageHeader>
+                            <PageHeader>
+                                <strong>{this.state.user.displayName}</strong>
+                                <Button className="btn-xs pull-right" bsStyle="danger" onClick={() => firebase.auth().signOut()}>Sign-Out</Button>
+                            </PageHeader>
+                            <PageHeader>
+                                <strong>Members</strong>
+                            </PageHeader>
                             <div>Members go here.</div>
                         </Col>
                     </Row>
