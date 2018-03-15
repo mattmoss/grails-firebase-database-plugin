@@ -21,10 +21,10 @@ public class QueryExtension {
      *
      * <pre>
      *     def listener = query.addValueEventListener {
-     *         onDataChange { DataSnapshot snapshot ->
+     *         onDataChange { DataSnapshot snapshot -&gt;
      *             //...
      *         }
-     *         onCancelled { DatabaseError error ->
+     *         onCancelled { DatabaseError error -&gt;
      *             //...
      *         }
      *     }
@@ -53,19 +53,19 @@ public class QueryExtension {
      *
      * <pre>
      *    def listener = query.addChildEventListener {
-     *         onChildAdded { DataSnapshot snapshot, String previousChildName ->
+     *         onChildAdded { DataSnapshot snapshot, String previousChildName -&gt;
      *             //...
      *         }
-     *         onChildChanged { DataSnapshot snapshot, String previousChildName ->
+     *         onChildChanged { DataSnapshot snapshot, String previousChildName -&gt;
      *             //...
      *         }
-     *         onChildMoved { DataSnapshot snapshot, String previousChildName ->
+     *         onChildMoved { DataSnapshot snapshot, String previousChildName -&gt;
      *             //...
      *         }
-     *         onChildRemoved { DataSnapshot snapshot ->
+     *         onChildRemoved { DataSnapshot snapshot -&gt;
      *             //...
      *         }
-     *         onCancelled { DatabaseError error ->
+     *         onCancelled { DatabaseError error -&gt;
      *             //...
      *         }
      *     }
@@ -93,7 +93,7 @@ public class QueryExtension {
      * Provide return value to removeEventListener to detach the listener.
      *
      * <pre>
-     *     def listener = query.onDataChange { DataSnapshot snapshot ->
+     *     def listener = query.onDataChange { DataSnapshot snapshot -&gt;
      *         //...
      *     }
      *
@@ -177,7 +177,7 @@ public class QueryExtension {
      * Get the value of this database query object. One-time read. Asynchronous.
      *
      * @param self Firebase database Query
-     * @param closure Groovy closure { Exception ex, value -> ... } called when complete
+     * @param closure Groovy closure { Exception ex, value -&gt; ... } called when complete
      */
     public static void getValue(Query self, @NotNull final Closure closure) {
         self.addListenerForSingleValueEvent(
@@ -198,9 +198,10 @@ public class QueryExtension {
     /**
      * Get the value of this database query object. One-time read. Asynchronous.
      *
+     * @param <T> the type of the value
      * @param self Firebase database Query
      * @param valueType class into which snapshot value should be marshaled
-     * @param closure Groovy closure { Exception ex, value -> ... } called when complete
+     * @param closure Groovy closure { Exception ex, value -&gt; ... } called when complete
      */
     public static <T> void getValue(Query self, final Class<T> valueType, @NotNull final Closure closure) {
         self.addListenerForSingleValueEvent(

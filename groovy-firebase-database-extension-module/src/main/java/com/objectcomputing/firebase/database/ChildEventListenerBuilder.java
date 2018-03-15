@@ -15,27 +15,27 @@ class ChildEventListenerBuilder {
 
     private ChildEventListenerBuilder() { }
 
-    ChildEventListenerBuilder onCancelled(Closure closure) {
+    public ChildEventListenerBuilder onCancelled(Closure closure) {
         this.cancelledHandler = closure;
         return this;
     }
 
-    ChildEventListenerBuilder onChildAdded(Closure closure) {
+    public ChildEventListenerBuilder onChildAdded(Closure closure) {
         this.childAddedHandler = closure;
         return this;
     }
 
-    ChildEventListenerBuilder onChildChanged(Closure closure) {
+    public ChildEventListenerBuilder onChildChanged(Closure closure) {
         this.childChangedHandler = closure;
         return this;
     }
 
-    ChildEventListenerBuilder onChildMoved(Closure closure) {
+    public ChildEventListenerBuilder onChildMoved(Closure closure) {
         this.childMovedHandler = closure;
         return this;
     }
 
-    ChildEventListenerBuilder onChildRemoved(Closure closure) {
+    public ChildEventListenerBuilder onChildRemoved(Closure closure) {
         this.childRemovedHandler = closure;
         return this;
     }

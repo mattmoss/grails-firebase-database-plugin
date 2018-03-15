@@ -16,7 +16,7 @@ import java.util.Map;
 public class DatabaseReferenceExtension {
 
     /**
-     * Provide getAt method (i.e. indexing operator) to alias child method.
+     * Provide getAt method (the indexing operator) to alias child method.
      *
      * @param self Firebase database DatabaseReference
      * @param pathString relative path from provided reference to new reference
@@ -27,7 +27,7 @@ public class DatabaseReferenceExtension {
     }
 
     /**
-     * Provide leftShift method (i.e. << operator) to alias .push().setValue().
+     * Provide leftShift method (the &lt;&lt; operator) to alias .push().setValue().
      * Returns the target DatabaseReference so multiple leftShift calls can be chained.
      * Access to the asynchronous task is not available, so completion/error notices
      * will go unnoticed.
@@ -46,7 +46,7 @@ public class DatabaseReferenceExtension {
      *
      * @param self Firebase database DatabaseReference
      * @param priority the priority to set on the database reference
-     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -> ... } to call when done
+     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -&gt; ... } to call when done
      */
     public static void setPriority(DatabaseReference self, Object priority, @NotNull final Closure closure) {
         self.setPriority(priority, closureAsCompletionListener(closure));
@@ -57,7 +57,7 @@ public class DatabaseReferenceExtension {
      *
      * @param self Firebase database DatabaseReference
      * @param value the value to set on the database reference
-     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -> ... } to call when done
+     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -&gt; ... } to call when done
      */
     public static void setValue(DatabaseReference self, Object value, @NotNull final Closure closure) {
         self.setValue(value, closureAsCompletionListener(closure));
@@ -69,7 +69,7 @@ public class DatabaseReferenceExtension {
      * @param self Firebase database DatabaseReference
      * @param value the value to set on the database reference
      * @param priority the priority to set on the database reference
-     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -> ... } to call when done
+     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -&gt; ... } to call when done
      */
     public static void setValue(DatabaseReference self, Object value, Object priority, @NotNull final Closure closure) {
         self.setValue(value, priority, closureAsCompletionListener(closure));
@@ -79,7 +79,7 @@ public class DatabaseReferenceExtension {
      * Provide removeValue method to clear the value, and that handles completion via a Groovy closure.
      *
      * @param self Firebase database DatabaseReference
-     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -> ... } to call when done
+     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -&gt; ... } to call when done
      */
     public static void removeValue(DatabaseReference self, @NotNull final Closure closure) {
         self.removeValue(closureAsCompletionListener(closure));
@@ -90,6 +90,7 @@ public class DatabaseReferenceExtension {
      *
      * @param self Firebase database DatabaseReference
      * @param pathString relative path from provided reference to descendant reference
+     * @return a future to which listeners can be added
      */
     public static ApiFuture<Void> remove(DatabaseReference self, String pathString) {
         return self.child(pathString).removeValueAsync();
@@ -101,7 +102,7 @@ public class DatabaseReferenceExtension {
      *
      * @param self Firebase database DatabaseReference
      * @param pathString relative path from provided reference to descendant reference
-     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -> ... } to call when done
+     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -&gt; ... } to call when done
      */
     public static void remove(DatabaseReference self, String pathString, @NotNull final Closure closure) {
         self.child(pathString).removeValue(closureAsCompletionListener(closure));
@@ -112,7 +113,7 @@ public class DatabaseReferenceExtension {
      *
      * @param self Firebase database DatabaseReference
      * @param update map of paths to values to update under provided database reference
-     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -> ... } to call when done
+     * @param closure the Groovy closure { DatabaseError error, DatabaseReference reference -&gt; ... } to call when done
      */
     public static void updateChildren(DatabaseReference self, Map<String, Object> update,
                                       @NotNull final Closure closure) {
@@ -126,8 +127,8 @@ public class DatabaseReferenceExtension {
      * to true.
      *
      * @param self Firebase database DatabaseReference
-     * @param handler the Groovy Closure { MutableData -> } called to modify data within a transaction
-     * @param complete the Groovy Closure { DatabaseError, DataSnapshot -> } called when transaction is complete
+     * @param handler the Groovy Closure { MutableData -&gt; } called to modify data within a transaction
+     * @param complete the Groovy Closure { DatabaseError, DataSnapshot -&gt; } called when transaction is complete
      */
     public static void withTransaction(
             DatabaseReference self,
@@ -143,8 +144,9 @@ public class DatabaseReferenceExtension {
      * same transaction. Be careful of any side effects or state within the closure.
      *
      * @param self Firebase database DatabaseReference
-     * @param handler the Groovy Closure { MutableData -> } called to modify data within a transaction
-     * @param complete the Groovy Closure { DatabaseError, DataSnapshot -> } called when transaction is complete
+     * @param fireLocalEvents when false, events will only be fired for the final result state of the transaction, and not for any intermediate states
+     * @param handler the Groovy Closure { MutableData -&gt; } called to modify data within a transaction
+     * @param complete the Groovy Closure { DatabaseError, DataSnapshot -&gt; } called when transaction is complete
      */
     public static void withTransaction(
             DatabaseReference self,

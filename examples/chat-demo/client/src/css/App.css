@@ -1,0 +1,37 @@
+.container {
+    color: #333;
+    line-height: 1.28;
+    font-size: 1.2em;
+}
+
+.row {
+    max-width: 100% !important;
+}
+
+button {
+    outline: none;
+}
+
+button.list-group-item {
+    font-weight: bold;
+}
+
+#chatMessages {
+    border: thin solid #DFDFDF;
+    height: 70vh;
+    overflow: auto;
+    padding: 0;
+    margin-bottom: 20px;
+    font-family: "Consolas", "Monaco", "Courier New", Courier, monospace;
+}
+
+#chatMessages table {
+    border: none;
+    margin: 0;
+}
+
+#chatMessages td {
+    line-height: 1em;
+    padding: 0.2em 0.5em;
+    border: none;
+}

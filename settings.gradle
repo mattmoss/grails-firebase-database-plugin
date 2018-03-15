@@ -1,1 +1,3 @@
-include 'groovy-firebase-database-extension-module'
+include ':groovy-firebase-database-extension-module'
+include ':grails-firebase-database-plugin'
+
