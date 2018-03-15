@@ -6,6 +6,7 @@ import ChannelList from './ChannelList/ChannelList';
 import ChannelHeader from './ChannelHeader/ChannelHeader';
 import ChannelInput from './ChannelInput/ChannelInput';
 import ChannelMessages from './ChannelMessages/ChannelMessages';
+import UsersList from './UsersList/UsersList';
 
 const uiConfig = {
     signInFlow: 'popup',
@@ -33,6 +34,12 @@ class App extends React.Component {
             if (!!user) {
                 console.log('User', user.displayName);
                 console.log('UID', user.uid);
+                firebase.database().ref(`users/${user.uid}`).set(
+                    { displayName: user.displayName }
+                ).then(
+                    () => console.log('Successfully sent user info'),
+                    error => console.error('Failed to send user info:', error)
+                );
             }
         });
     }
@@ -71,12 +78,17 @@ class App extends React.Component {
                         <Col sm={2}>
                             <PageHeader>
                                 <strong>{this.state.user.displayName}</strong>
-                                <Button className="btn-xs pull-right" bsStyle="danger" onClick={() => firebase.auth().signOut()}>Sign-Out</Button>
                             </PageHeader>
+                            <div>
+                                <Button className="btn-sm" bsStyle="danger"
+                                        onClick={() => firebase.auth().signOut()}>
+                                    Sign-Out
+                                </Button>
+                            </div>
                             <PageHeader>
                                 <strong>Members</strong>
                             </PageHeader>
-                            <div>Members go here.</div>
+                            <UsersList />
                         </Col>
                     </Row>
                 </Grid>
