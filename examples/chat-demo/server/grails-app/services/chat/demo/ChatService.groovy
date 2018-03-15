@@ -2,9 +2,7 @@ package chat.demo
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.Exclude
 import com.google.firebase.database.FirebaseDatabase
-import grails.compiler.GrailsCompileStatic
 
 class ChatService {
 
@@ -42,7 +40,7 @@ class ChatService {
             if (message) {
                 document["outgoing/${channel}"] << message
             }
-            
+
             // Once we've processed the message, remove it from incoming.
             incoming.remove snapshot.key
         }
@@ -65,23 +63,4 @@ class ChatService {
         )
     }
 
-}
-
-// TODO: Create plugin annotation to make Serializable and @Exclude [gs]etMetaClass(). (Also: more for domain classes?)
-class ChatMessage implements Serializable {
-    String author
-    String message
-    Long timestamp
-
-    @Exclude
-    @Override
-    MetaClass getMetaClass() {
-        ChatMessage.getMetaClass()
-    }
-
-    @Exclude
-    @Override
-    void setMetaClass(MetaClass metaClass) {
-        ChatMessage.setMetaClass metaClass
-    }
 }
