@@ -1,0 +1,4 @@
+To add the Grails Firebase Database plugin to an application, add the following dependency to your build.gradle:
+
+[source,groovy,subs="attributes"]
+compile '{groupId}:{artifactId}:{version}'

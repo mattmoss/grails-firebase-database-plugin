@@ -1,0 +1,24 @@
+== Grails Firebase Database Plugin {version}
+:author: Matthew Moss <mossm@objectcomputing.com>
+:source-highlighter: coderay
+:numbered:
+
+== Introduction
+
+include::introduction.adoc[]
+
+== Installation
+
+include::installation.adoc[]
+
+== Getting Started
+
+include::gettingStarted.adoc[]
+
+== Configuration
+
+include::configuration.adoc[]
+
+== API Documentation
+
+API documentation may be found link:TODO[here].

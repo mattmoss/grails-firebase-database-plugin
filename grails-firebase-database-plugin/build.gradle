@@ -57,5 +57,11 @@ grailsPublish {
 }
 
 asciidoctor {
-
+    setAttributes 'experimental': 'true',
+            'compat-mode': 'true',
+            'toc': 'left',
+            'icons': 'font',
+            'version': project.version,
+            'groupId': project.group,
+            'artifactId': project.name
 }
