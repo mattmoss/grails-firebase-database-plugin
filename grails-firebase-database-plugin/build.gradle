@@ -1,64 +1,61 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url "https://repo.grails.org/grails/core" }
+        maven { url 'https://repo.grails.org/grails/core' }
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
     }
 }
 
-version "0.1"
-group "org.grails.plugins"
+version '0.1'
+group 'org.grails.plugins'
 
-apply plugin:"eclipse"
-apply plugin:"idea"
-apply plugin:"org.grails.grails-plugin"
-apply plugin:"org.grails.grails-plugin-publish"
+apply plugin:'eclipse'
+apply plugin:'idea'
+apply plugin:'org.grails.grails-plugin'
+apply plugin:'org.grails.grails-plugin-publish'
+apply plugin:'org.asciidoctor.convert'
 
 repositories {
     mavenLocal()
-    maven { url "https://repo.grails.org/grails/core" }
+    maven { url 'https://repo.grails.org/grails/core' }
 }
 
 dependencies {
-    compile "org.springframework.boot:spring-boot-starter-logging"
-    compile "org.springframework.boot:spring-boot-autoconfigure"
-    compile "org.grails:grails-core"
-    console "org.grails:grails-console"
-    profile "org.grails.profiles:plugin"
-    provided "org.grails:grails-plugin-services"
-    provided "org.grails:grails-plugin-domain-class"
-    testCompile "org.grails:grails-plugin-testing"
+    compile 'org.springframework.boot:spring-boot-starter-logging'
+    compile 'org.springframework.boot:spring-boot-autoconfigure'
+    compile 'org.grails:grails-core'
+    console 'org.grails:grails-console'
+    profile 'org.grails.profiles:plugin'
+    provided 'org.grails:grails-plugin-services'
+    provided 'org.grails:grails-plugin-domain-class'
+    testCompile 'org.grails:grails-plugin-testing'
 
     compile project(':groovy-firebase-database-extension-module')
 }
 
-bootRun {
-    jvmArgs('-Dspring.output.ansi.enabled=always')
-    addResources = true
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleWrapperVersion
 }
-// enable if you wish to package this plugin as a standalone application
-bootRepackage.enabled = false
+
+jar {
+    exclude 'application.groovy'
+    // TODO Others?
+}
+
 grailsPublish {
-    // TODO: Provide values here
-    user = 'user'
-    key = 'key'
-    githubSlug = 'foo/bar'
+    userOrg = 'grails'
+    githubSlug = 'grails-plugins/grails-firebase-database-plugin'
     license {
         name = 'Apache-2.0'
     }
-    title = "My Plugin"
-    desc = "Full plugin description"
-    developers = [johndoe:"John Doe"]
-    portalUser = ""
-    portalPassword = ""    
+    title = project.title
+    desc = project.projectDesc
+    developers = [mattmoss: 'Matthew Moss']
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
+asciidoctor {
+
 }
