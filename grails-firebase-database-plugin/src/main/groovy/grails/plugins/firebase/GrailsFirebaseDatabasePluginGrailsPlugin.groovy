@@ -5,7 +5,9 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.database.FirebaseDatabase
 import grails.plugins.Plugin
+import groovy.util.logging.Slf4j
 
+@Slf4j
 class GrailsFirebaseDatabasePluginGrailsPlugin extends Plugin {
 
     // the version or versions of Grails the plugin is designed for
@@ -45,24 +47,59 @@ Provides access to the Firebase realtime database.
 
     Closure doWithSpring() { { ->
         def config = grailsApplication.config['grails.plugin.firebase']
-
-        def databaseName = config['databaseName']
-        if (!databaseName) {
-            throw new IllegalArgumentException("Config 'grails.plugin.firebase.databaseName' required.")
+        if (!config) {
+            log.error 'Firebase database disabled: configuration not found'
+            return
         }
 
-        def databaseUrl = "https://${databaseName}.firebaseio.com"
-        Map authOverride = config['authOverride'] ?: [:]
+        GoogleCredentials credentials
+        String credentialsPath = config['credentials']
+        if (credentialsPath) {
+            def serviceAccount = new FileInputStream(credentialsPath)
+            credentials = GoogleCredentials.fromStream(serviceAccount)
+        }
+        else {
+            credentials = GoogleCredentials.applicationDefault
+        }
+        if (!credentials) {
+            log.error 'Firebase database disabled: credentials not found'
+            return
+        }
 
-        // TODO Permit configuration of credentials (this currently assumes GCP).
-        GoogleCredentials credentials = GoogleCredentials.applicationDefault
+        String databaseName = config['databaseName']
+        String databaseUrl = config['databaseUrl'] ?: (databaseName ? "https://${databaseName}.firebaseio.com" : null)
+
+        if (!databaseUrl) {
+            log.error 'Firebase database disabled: neither `databaseName` nor `databaseUrl` specified in configuration'
+            return
+        }
 
         def options = new FirebaseOptions.Builder().
                 setCredentials(credentials).
-                setDatabaseUrl(databaseUrl).
-                setDatabaseAuthVariableOverride(authOverride).
-                build()
-        FirebaseApp.initializeApp(options)
+                setDatabaseUrl(databaseUrl)
+
+        // If authOverride is specified (boolean true, map, or otherwise), then setDatabaseAuthVariableOverride will be
+        // called and will limit privileges accordingly. If unspecified or false, then the override will not be called
+        // and the application will have full access (i.e. security rules are bypassed entirely).
+
+        def authOverride = config['authOverride']
+        if (authOverride) {
+            if (authOverride instanceof Map<String, Object>) {
+                // Limit privileges according to the provided Map (e.g. [uid: 'my-service-worker']).
+                options.setDatabaseAuthVariableOverride(authOverride)
+            }
+            else {
+                // Limit privileges as that of an unauthorized user.
+                options.setDatabaseAuthVariableOverride(null)
+
+                // Warn if value unexpected (at this point, not boolean true).
+                if (!(authOverride instanceof Boolean)) {
+                    // TODO: WARNING
+                }
+            }
+        }
+
+        FirebaseApp.initializeApp(options.build())
 
         firebaseDatabase(FirebaseDatabase) { bean ->
             bean.factoryMethod = 'getInstance'
