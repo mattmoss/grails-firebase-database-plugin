@@ -1,4 +1,4 @@
-== Create the Database
+=== Create the Database
 
 If you don't already have a database, you'll need to create one. Go to the
 https://console.firebase.google.com/[Firebase Console] and add a new project, or
@@ -22,13 +22,13 @@ presented with a block of code similar to this:
   firebase.initializeApp(config);
 </script>
 
-NOTE: Of course, your values will differ from the above, which do not actually correspond to
-any existing project. These values are public (i.e. neither private nor secret) and can be
+NOTE: Of course, your values will differ from the above (which do not actually correspond to
+any existing project). These values are public (i.e. neither private nor secret) and can be
 committed to source control at need.
 
 Copy the `projectId`, which will be used to configure the plugin in your Grails application.
 
-== Configure the Database
+=== Configure the Database
 
 To get started, identify your Firebase database to the plugin by adding the following
 configuration to `application.yml`:
