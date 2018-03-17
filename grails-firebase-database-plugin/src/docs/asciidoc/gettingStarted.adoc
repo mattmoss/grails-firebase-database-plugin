@@ -1,0 +1,43 @@
+== Create the Database
+
+If you don't already have a database, you'll need to create one. Go to the
+https://console.firebase.google.com/[Firebase Console] and add a new project, or
+click on your existing project.
+
+From the Project Overview page, click '**Add Firebase to your web app**'. You will be
+presented with a block of code similar to this:
+
+[source,html]
+<script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "MI5tw5uMcAB5JeqkOAO4TnrRe83XyP6vjFtp1Ey",
+    authDomain: "your-awesome-project.firebaseapp.com",
+    databaseURL: "https://your-awesome-project.firebaseio.com",
+    projectId: "your-awesome-project",
+    storageBucket: "your-awesome-project.appspot.com",
+    messagingSenderId: "813414364754"
+  };
+  firebase.initializeApp(config);
+</script>
+
+NOTE: Of course, your values will differ from the above, which do not actually correspond to
+any existing project. These values are public (i.e. neither private nor secret) and can be
+committed to source control at need.
+
+Copy the `projectId`, which will be used to configure the plugin in your Grails application.
+
+== Configure the Database
+
+To get started, identify your Firebase database to the plugin by adding the following
+configuration to `application.yml`:
+
+[source,yaml]
+grails:
+    plugins:
+        firebase:
+            databaseName: your-awesome-project
+
+Replace `your-awesome-project` here with the name of your project: that is, the `projectId`
+value you copied above.
