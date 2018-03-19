@@ -67,10 +67,12 @@ Provides access to the Firebase realtime database.
         }
 
         String projectId = config['projectId']
-        String databaseUrl = config['databaseURL'] ?: (projectId ? "https://${projectId}.firebaseio.com" : null)
+        String databaseUrl = config['databaseUrl'] ?:
+                config['databaseURL'] ?:
+                (projectId ? "https://${projectId}.firebaseio.com" : null)
 
         if (!databaseUrl) {
-            log.error 'Firebase database disabled: neither `projectId` nor `databaseURL` specified in configuration'
+            log.error 'Firebase database disabled: neither `projectId` nor `databaseUrl` specified in configuration'
             return
         }
 
