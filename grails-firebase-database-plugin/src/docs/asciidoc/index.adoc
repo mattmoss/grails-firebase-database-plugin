@@ -11,10 +11,6 @@ include::introduction.adoc[]
 
 include::installation.adoc[]
 
-== Getting Started
-
-include::gettingStarted.adoc[]
-
 == Configuration
 
 include::configuration.adoc[]
