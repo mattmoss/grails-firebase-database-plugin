@@ -115,3 +115,5 @@ grails:
     plugin:
         firebase:
             databaseName: grails-firebase-chat-demo
+            authOverride:
+                uid: chat-demo-service
