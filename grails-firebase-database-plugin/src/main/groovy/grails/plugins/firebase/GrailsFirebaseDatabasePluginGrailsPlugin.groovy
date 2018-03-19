@@ -10,40 +10,26 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class GrailsFirebaseDatabasePluginGrailsPlugin extends Plugin {
 
-    // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "3.2.9 > *"
-    // resources that are excluded from plugin packaging
+    def grailsVersion = '3.2.9 > *'
+
     def pluginExcludes = [
-        "grails-app/views/error.gsp"
+        'grails-app/views/error.gsp'
     ]
 
-    // TODO Fill in these fields
-    def title = "Grails Firebase Database Plugin" // Headline display name of the plugin
-    def author = "Matthew Moss"
-    def authorEmail = "mossm@objectcomputing.com"
-    def description = '''\
-Provides access to the Firebase realtime database.
-'''
+    def title = 'Grails Firebase Database Plugin'
+    def description = 'Provides access to the Firebase realtime database.'
 
-    // URL to the plugin's documentation
-    def documentation = "http://grails.org/plugin/grails-firebase-database-plugin"
+    def author = 'Matthew Moss'
+    def authorEmail = 'mossm@objectcomputing.com'
 
-    // Extra (optional) plugin metadata
+    def organization = [name: 'OCI', url: 'http://www.objectcomputing.com/']
 
-    // License: one of 'APACHE', 'GPL2', 'GPL3'
-    // def license = "APACHE"
-
-    // Details of company behind the plugin (if there is one)
-    // def organization = [ name: "My Company", url: "http://www.my-company.com/" ]
-
-    // Any additional developers beyond the author specified above.
-    // def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
-
-    // Location of the plugin's issue tracker.
+    def documentation = 'http://grails.org/plugin/grails-firebase-database-plugin'
+    def scm = [url: 'https://github.com/grails-plugins/grails-firebase-database-plugin']
     // def issueManagement = [ system: "JIRA", url: "http://jira.grails.org/browse/GPMYPLUGIN" ]
 
-    // Online location of the plugin's browseable source code.
-    // def scm = [ url: "http://svn.codehaus.org/grails-plugins/" ]
+    def license = 'APACHE'
+
 
     Closure doWithSpring() { { ->
         def config = grailsApplication.config['grails.plugin.firebase']
@@ -67,8 +53,7 @@ Provides access to the Firebase realtime database.
         }
 
         String projectId = config['projectId']
-        String databaseUrl = config['databaseUrl'] ?:
-                config['databaseURL'] ?:
+        String databaseUrl = config['databaseUrl'] ?: config['databaseURL'] ?:
                 (projectId ? "https://${projectId}.firebaseio.com" : null)
 
         if (!databaseUrl) {
