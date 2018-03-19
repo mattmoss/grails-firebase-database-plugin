@@ -66,11 +66,11 @@ Provides access to the Firebase realtime database.
             return
         }
 
-        String databaseName = config['databaseName']
-        String databaseUrl = config['databaseUrl'] ?: (databaseName ? "https://${databaseName}.firebaseio.com" : null)
+        String projectId = config['projectId']
+        String databaseUrl = config['databaseURL'] ?: (projectId ? "https://${projectId}.firebaseio.com" : null)
 
         if (!databaseUrl) {
-            log.error 'Firebase database disabled: neither `databaseName` nor `databaseUrl` specified in configuration'
+            log.error 'Firebase database disabled: neither `projectId` nor `databaseURL` specified in configuration'
             return
         }
 
@@ -78,22 +78,22 @@ Provides access to the Firebase realtime database.
                 setCredentials(credentials).
                 setDatabaseUrl(databaseUrl)
 
-        // If authOverride is specified (boolean true, map, or otherwise), then setDatabaseAuthVariableOverride will be
+        // If overrideAuth is specified (boolean true, map, or otherwise), then setDatabaseAuthVariableOverride will be
         // called and will limit privileges accordingly. If unspecified or false, then the override will not be called
         // and the application will have full access (i.e. security rules are bypassed entirely).
 
-        def authOverride = config['authOverride']
-        if (authOverride) {
-            if (authOverride instanceof Map<String, Object>) {
+        def overrideAuth = config['overrideAuth']
+        if (overrideAuth) {
+            if (overrideAuth instanceof Map<String, Object>) {
                 // Limit privileges according to the provided Map (e.g. [uid: 'my-service-worker']).
-                options.setDatabaseAuthVariableOverride(authOverride)
+                options.setDatabaseAuthVariableOverride(overrideAuth)
             }
             else {
                 // Limit privileges as that of an unauthorized user.
                 options.setDatabaseAuthVariableOverride(null)
 
                 // Warn if value unexpected (at this point, not boolean true).
-                if (!(authOverride instanceof Boolean)) {
+                if (!(overrideAuth instanceof Boolean)) {
                     // TODO: WARNING
                 }
             }

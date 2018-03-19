@@ -114,6 +114,6 @@ environments:
 grails:
     plugin:
         firebase:
-            databaseName: grails-firebase-chat-demo
-            authOverride:
+            projectId: grails-firebase-chat-demo
+            overrideAuth:
                 uid: chat-demo-service
