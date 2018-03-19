@@ -1,0 +1,141 @@
+=== Create the Database
+
+If you don't already have a database, you'll need to create one. Go to the
+https://console.firebase.google.com/[Firebase Console] and add a new project,
+or click on your existing project.
+
+From the Project Overview page, click the button `Add Firebase to your web
+app`. You will be shown a block of code similar to this:
+
+[source,html]
+<script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "MI5tw5uMcAB5JeqkOAO4TnrRe83XyP6vjFtp1Ey",
+    authDomain: "your-awesome-project.firebaseapp.com",
+    databaseURL: "https://your-awesome-project.firebaseio.com",
+    projectId: "your-awesome-project",
+    storageBucket: "your-awesome-project.appspot.com",
+    messagingSenderId: "813414364754"
+  };
+  firebase.initializeApp(config);
+</script>
+
+NOTE: Of course, the configuration values for your database will differ from the
+above (which does not actually correspond to any existing project). These values
+are public and can be committed to source control at need.
+
+=== Configure the Database
+
+To configure your Grails application to work with your Firebase database, you
+will need to first copy some of the values from the configuration code block
+above and add them to your Grails configuration.
+
+First, identify your Firebase database to the plugin by adding the `projectId`
+to `application.yml` (or `application.groovy` if you use that):
+
+[source,yaml]
+grails:
+    plugins:
+        firebase:
+            projectId: your-awesome-project
+
+=== Configure the Database URL
+
+If your Firebase database uses the default URL based on the `projectId`
+(e.g. `https://your-awesome-project.firebaseio.com`), then you don't need to add
+any additional information. However, if you have a custom URL, copy it from the
+Firebase configuration block and add it to your Grails configuration using the
+`databaseUrl` key.
+
+[source,yaml]
+grails:
+    plugins:
+        firebase:
+            databaseName: your-awesome-project
+            databaseUrl: https://your-awesome-project.your-custom-domain.org
+
+The database URL is required, either explicitly via the `databaseUrl`
+configuration value or implicitly via the `projectId` configuration value.
+
+=== Configure Service Account Credentials
+
+The Grails Firebase database plugin makes use of the Java version of the
+https://firebase.google.com/docs/admin/setup?authuser=0[Firebase Admin SDK]. A
+service account is required to use this SDK.
+
+Follow the
+https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk?authuser=0[instructions for adding a service account]
+to create a service account for your Firebase database and download a
+credentials file. Store this file in a safe, secure location.
+
+IMPORTANT: This file contains private information about your service account.
+Keep it confidential; do *not* store it in a public repository. If lost or
+leaked, generate a new set of credentials.
+
+Configure the credentials with your Grails application by providing the file
+path to the credentials file in the configuration:
+
+[source,yaml]
+grails:
+    plugins:
+        firebase:
+            credentials: /path/to/serviceAccountKey.json
+            databaseName: your-awesome-project
+            databaseUrl: https://your-awesome-project.your-custom-domain.org
+
+Note that `credentials` is optional. If present, the Grails Firebase database
+plugin will use the named file to identify and authenticate your service account.
+If you do not specify a path for `credentials`, then the plugin will attempt to
+identify and authenticate your service account by other means:
+
+.   A credentials file identified by the `GOOGLE_APPLICATION_CREDENTIALS`
+    environment variable
+.   Credentials provided by the Google Cloud SDK
+    (i.e. `gcloud auth application-default login`)
+.   Built-in credentials while running in the Google App Engine environment
+.   Built-in credentials while running in the Google Cloud Shell environment
+.   Built-in credentials while running in the Google Compute Engine environment
+
+For more information on service accounts for Firebase database access via the
+Admin SDK, please refer to
+https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk?authuser=0[instructions for adding a service account]
+or addition instructions on
+https://cloud.google.com/docs/authentication/production?authuser=0[configuring authentication for production applications].
+
+=== Configure Authorization Override
+
+By default, because the Grails Firebase Database plugin uses the Firebase Admin
+SDK, it has *complete, unrestricted read and write access* to your database.
+This may be useful for some administrative tasks (e.g. data migration or
+restructuring). Generally, you will want to restrict your Grails application's
+read and write access to the database and limit it to particular tasks, in order
+to avoid accidental, unwanted writes.
+
+To do that, add an `overrideAuth` configuration property:
+
+[source,yaml]
+grails:
+    plugins:
+        firebase:
+            credentials: /path/to/serviceAccountKey.json
+            databaseName: your-awesome-project
+            databaseUrl: https://your-awesome-project.your-custom-domain.org
+            overrideAuth:
+                uid: 'my-service-worker'
+
+The values you provide under `overrideAuth` will be available in your Firebase
+databases's rules in the `auth` object (so, for example, `overrideAuth.uid` will
+be available as `auth.uid` in the Rules).
+
+You can also limit your application's privileges as if it were an unauthenticated
+user by specifying `overrideAuth: true`.
+
+Specifying `overrideAuth: false` (or not specifying `overrideAuth` at all) will
+give your application complete and unrestricted access to the database: all
+rules will be ignored.
+
+For additional information, please review how to
+https://firebase.google.com/docs/database/admin/start#authenticate-with-limited-privileges[authenticate
+with limited privileges].
