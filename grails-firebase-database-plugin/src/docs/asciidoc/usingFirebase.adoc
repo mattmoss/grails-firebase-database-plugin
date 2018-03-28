@@ -77,6 +77,11 @@ class UserService {
 The sections below will describe some of the extensions provided to simplify
 adding Firebase interactions to your Grails application.
 
+NOTE: You should be familiar with the Java Admin SDK API to use this plugin.
+While the plugin extends Firebase classes and APIs, it does not change the
+overall structure or programming model significantly. Familiarity with the
+official API is highly recommended.
+
 === FirebaseDatabase Bean
 
 The plugin configures an instance of
