@@ -15,6 +15,10 @@ include::installation.adoc[]
 
 include::configuration.adoc[]
 
+== Use
+
+include::usingFirebase.adoc[]
+
 == API Documentation
 
 API documentation may be found link:TODO[here].

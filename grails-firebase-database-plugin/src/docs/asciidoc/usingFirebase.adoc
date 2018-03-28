@@ -1,0 +1,295 @@
+=== Overview
+
+The Grails Firebase Database plugin initializes the Firebase database based on
+configuration provided in the previous section. The end result of this initialization
+is a bean called `firebaseDatabase` which is an instance of the class
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/FirebaseDatabase[`FirebaseDatabase`].
+
+From there, you can use the full
+https://firebase.google.com/docs/reference/admin/[Java API of the Firebase Admin SDK].
+For example, to make an announcement about new users, you might write the
+following code.
+
+[source,groovy,subs="attributes"]
+----
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.FirebaseDatabase
+
+class UserService {
+    FirebaseDatabase firebaseDatabase
+
+    def announceNewUsers() {
+        DatabaseReference root = firebaseDatabase.reference
+
+        root.child('app/users').addChildEventListener(new ChildEventListener() {
+            @Override
+            void onChildAdded(DataSnapshot snapshot, String prevChildKey) {
+                User user = snapshot.getValue(User.class)
+                println "We have a new user, ${user.username}"
+                println "... who is currently ${user.status}"
+            }
+
+            @Override
+            void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) { }
+
+            @Override
+            void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) { }
+
+            @Override
+            void onChildRemoved(DataSnapshot dataSnapshot) { }
+
+            @Override
+            void onCancelled(DatabaseError databaseError) { }
+        })
+    }
+}
+----
+
+The above code is a slight improvement over a strict Java implementation, owning
+to the features Groovy provides. But providing a `ChildEventListener` subclass
+still requires empty overrides of its API. With the extensions provided by the
+Grails Firebase plugin, much of the excess code needed to satisfy the Java API
+can be eliminated.
+
+[source,groovy,subs="attributes"]
+----
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.FirebaseDatabase
+
+class UserService {
+    FirebaseDatabase firebaseDatabase
+
+    def announceUsers() {
+        DatabaseReference root = firebaseDatabase.reference
+
+        root['app/users'].onChildAdded { DataSnapshot snapshot, String prevChildKey ->
+            User user = snapshot.getValue(User.class)
+            println "We have a new user, ${user.username}"
+            println "... who is currently ${user.status}"
+        }
+    }
+}
+----
+
+The sections below will describe some of the extensions provided to simplify
+adding Firebase interactions to your Grails application.
+
+=== FirebaseDatabase Bean
+
+The plugin configures an instance of
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/FirebaseDatabase[`FirebaseDatabase`]
+as a bean named `firebaseDatabase`.
+
+The `FirebaseDatabase` API provides a few utility functions, but the function you
+will need and use the most is `getReference()` which returns a `DatabaseReference`
+to the database's root node.
+
+[source,groovy,subs="attributes"]
+DatabaseReference root = firebaseDatabase.reference
+
+=== DatabaseReference/Query Extensions
+
+The extensions to
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DatabaseReference[`DatabaseReference`]
+(and its superclass,
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/Query[`Query`])
+are where most of the plugin's assistance is provided. As before, the Java API is
+always available, but the plugin simplifies some forms of writing, reading and
+handling asynchronous responses (as most of the Firebase API is asynchronous).
+
+==== Child Access
+
+Access to deeper sub-documents is usually done via the `DatabaseReference.child`
+method. The plugin provides similar access via the brackets operator:
+
+[source,groovy,subs="attributes"]
+----
+// These two lines are the same.
+
+DatabaseReference users = root.child('app/users')
+
+DatabaseReference users = root['app/users']
+----
+
+==== Adding Children
+
+While appending new values to a collection in your Firebase document, a common
+idiom is to first
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DatabaseReference.html#push()[`push`],
+which returns a new child node with unique key, them immediately call
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DatabaseReference#setValue(java.lang.Object,%20com.google.firebase.database.DatabaseReference.CompletionListener)[`setValue`] /
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DatabaseReference.html#setValueAsync(java.lang.Object)[`setValueAsync`]
+(or one of its relatives) to set the value of the new node. The plugin provides
+this function in the left-shift operator. The left-shift operator returns the
+original node, so multiple uses of the operator can be chained.
+
+[source,groovy,subs="attributes"]
+----
+DatabaseReference users = root['app/users']
+
+// Add three new users using the Java API.
+users.push().setValueAsync(new User(username: 'mossm'))
+users.push().setValueAsync(new User(username: 'brownj'))
+users.push().setValueAsync(new User(username: 'kleinz'))
+
+// Add three new users with the left-shift operator.
+users << new User(username: 'mossm') <<
+         new User(username: 'brownj') <<
+         new User(username: 'kleinz')
+----
+
+NOTE: The left-shift operator is a convenience, but (currently) does not provide
+a means to know when the (asynchronous) writes have finished or generated an
+error. If you need to know this, use the Java API.
+
+==== Removing Children
+
+To remove a node requires setting it's value to `null` or (preferably) using the
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DatabaseReference.html#removeValue(com.google.firebase.database.DatabaseReference.CompletionListener)[`removeValue`] /
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DatabaseReference.html#removeValueAsync()[`removeValueAsync`]
+API. This becomes a two-step process if you actually need to remove a child:
+first, get a reference to the child node; then remove its value.
+
+The plugin extends `DatabaseReference` and provides a `remove` method to do this
+for you.
+
+[source,groovy,subs="attributes"]
+----
+DatabaseReference alerts = root['app/alerts']
+
+alerts.onChildAdded { DataSnapshot snapshot, String prevChildKey ->
+    log.warn snapshot.value
+
+    // Remove the alert from the database. Instead of:
+    //
+    //      alerts[snapshot.key].removeValueAsync()
+    //
+    // the plugin allows:
+
+    alerts.remove snapshot.key
+}
+----
+
+=== Event Listeners
+
+The extensions to
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/Query[`Query`]
+(of which `DatabaseReference` is a subclass) make it easier to add event listeners.
+As shown in the example earlier, you need to subclass `ChildEventListener` and add
+a lot of empty boilerplate to add a listener just to listen for one event. The
+plugin manages most of that behind the scenes; you provide a Groovy closure that
+is called when the selected event occurs.
+
+To listen for one child event (i.e. child added, changed, moved, or removed),
+use the appropriately named handler on the `Query` instance and provide a closure
+that accepts the arguments appropriate for that handler.
+
+[source,groovy,subs="attributes"]
+----
+DatabaseReference users = root['app/users']
+
+users.onChildAdded { DataSnapshot snapshot, String prevChildKey ->
+    println "User ${snapshot.value.username} has arrived."
+}
+
+users.onChildRemoved { DataSnapshot snapshot ->
+    println "User ${snapshot.value.username} has left."
+}
+----
+
+There are event handlers that correspond (in name and arguments) to each of
+the event handlers on
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/ChildEventListener[`ChildEventListener`]
+and on
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/ValueEventListener[`ValueEventListener`].
+These are far less effort and cleaner code when adding only one or two handlers.
+If you need to add more than one handler (or need to handle cancellations via the
+`onCancelled` handler), you can combine these handlers into a single listener
+instance:
+
+[source,groovy,subs="attributes"]
+----
+root['app/users'].addChildEventListener {
+    onChildAdded { DataSnapshot snapshot, String prevChildKey ->
+        println "User ${snapshot.value.username} has arrived."
+    }
+
+    onChildRemoved { DataSnapshot snapshot ->
+        println "User ${snapshot.value.username} has left."
+    }
+}
+----
+
+All of these handlers (whether individually created via `onDataChange`,
+`onChildAdded`, etc., or created as a group via `addChildEventListener` or
+`addValueEventListener`) return a reference to the listener
+instance which can be provided later to `removeEventListener` to remove that
+listener.
+
+[source,groovy,subs="attributes"]
+----
+DatabaseReference users = root['app/users']
+def childListener = users.addChildEventListener {
+    onChildAdded { DataSnapshot snapshot, String prevChildKey -> ... }
+    onChildRemoved { DataSnapshot snapshot -> ... }
+}
+
+DatabaseReference status = root['app/status']
+def valueListener = status.onDataChange { DataSnapshot snapshot -> ... }
+
+// Later...
+users.removeEventListener childListener
+status.removeEventListener valueListener
+----
+
+=== Completion Listeners
+
+As with event listeners above, completion listeners are simplified by permitting
+the use of Groovy closures. A completion listener closure takes two arguments: a
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DatabaseError[`DatabaseError`]
+and a
+https://firebase.google.com/docs/reference/admin/java/reference/com/google/firebase/database/DatabaseReference[`DatabaseReference`].
+The error will be `null` if the operation succeeded. Take the following code,
+for example, which reports whether a write succeeded.
+
+[source,groovy,subs="attributes"]
+----
+root['app/status'].setValue('Online', new DatabaseReference.CompletionListener() {
+    @Override
+    void onComplete(DatabaseError error, DatabaseReference ref) {
+        if (error) {
+            log.error "Status update failed: ${error.message}"
+        }
+        else {
+            log.info "Status updated."
+        }
+    }
+})
+----
+
+This can be rewritten as:
+
+[source,groovy,subs="attributes"]
+----
+root['app/status'].setValue('Online') { DatabaseError error, DatabaseReference ref ->
+        if (error) {
+            log.error "Status update failed: ${error.message}"
+        }
+        else {
+            log.info "Status updated."
+        }
+    }
+}
+----
+
+The use of completion listeners applies to a number of APIs available on
+`DatabaseReference`, including `removeValue`, `setPriority`, `setValue`,
+and `updateChildren`.
+
+
+=== Transactions
+
+TBD
