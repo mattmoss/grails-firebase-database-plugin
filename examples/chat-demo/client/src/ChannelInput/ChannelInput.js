@@ -1,4 +1,3 @@
-
 import React from 'react';
 import firebase from '../firebase';
 import ChannelInputView from './ChannelInputView';
@@ -11,7 +10,7 @@ class ChannelInput extends React.Component {
 
     sendMessage() {
         firebase.database().ref(`incoming/${this.props.channel.key}`).push({
-            author: 'foobar',
+            author: firebase.auth().currentUser.uid,
             message: this.state.message.trim(),
             timestamp: Date.now()
         }).then(
