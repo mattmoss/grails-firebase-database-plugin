@@ -14,7 +14,7 @@ class ChannelMessages extends React.Component {
     }
 
     getMessagesRef(channel) {
-        return firebase.database().ref(`outgoing/${channel.key}`);
+        return firebase.database().ref(`messages/${channel.key}`);
     }
 
     listenChannel(channel) {

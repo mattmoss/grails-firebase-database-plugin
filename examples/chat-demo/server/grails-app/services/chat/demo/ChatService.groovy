@@ -39,7 +39,7 @@ class ChatService {
             // Get the incoming message, process it, and post it to outgoing (if it hasn't been vetoed).
             ChatMessage message = processMessage(channel, snapshot.getValue(ChatMessage))
             if (message) {
-                document["outgoing/${channel}"].push().setValue(message) { DatabaseError error, reference ->
+                document["messages/${channel}"].push().setValue(message) { DatabaseError error, reference ->
                     if (error) {
                         log.error "Firebase Database error: ${error.message}"
                     }
