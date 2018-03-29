@@ -24,11 +24,23 @@ const uiConfig = {
 class App extends React.Component {
 
     state = {
+        channels: [],
         active: null,
         user: null,
     };
 
-    componentDidMount() {
+    loadChannels() {
+        const channelsRef = firebase.database().ref('channels').orderByChild('name');
+        channelsRef.on('value', snapshot => {
+            let channels = [];
+            snapshot.forEach(data => {
+                channels.push({ key: data.key, ...data.val() });
+            });
+            this.setState({ channels });
+        });
+    }
+
+    watchAuthentication() {
         firebase.auth().onAuthStateChanged(user => {
             this.setState({ user });
             if (!!user) {
@@ -42,6 +54,11 @@ class App extends React.Component {
                 );
             }
         });
+    }
+
+    componentDidMount() {
+        this.loadChannels();
+        this.watchAuthentication();
     }
 
     render() {
@@ -65,7 +82,8 @@ class App extends React.Component {
                     <Row>
                         <Col sm={2}>
                             <PageHeader><strong>Channels</strong></PageHeader>
-                            <ChannelList active={this.state.active}
+                            <ChannelList channels={this.state.channels}
+                                         active={this.state.active}
                                          onSelect={selectChannel} />
                         </Col>
                         <Col sm={8}>

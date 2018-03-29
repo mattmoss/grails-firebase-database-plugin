@@ -1,32 +1,23 @@
 import React from 'react';
-import firebase from '../firebase';
-import ChannelListView from './ChannelListView';
+import { ListGroup, ListGroupItem } from 'react-bootstrap';
 
-class ChannelList extends React.Component {
+const ChannelList = ({ channels, active, onSelect }) => {
 
-    state = {
-        channels: []
-    };
+    const isActive = channel => (active && active.key === channel.key);
+    const selectChannel = channel => () => onSelect(channel);
 
-    componentDidMount() {
-        const channelsRef = firebase.database().ref('channels').orderByChild('name');
-        channelsRef.on('value', snapshot => {
-            let channels = [];
-            snapshot.forEach(data => {
-                channels.push({ key: data.key, ...data.val() });
-            });
-            this.setState({ channels });
-        });
-    }
+    return (
+        <ListGroup>
+            {channels.map(channel =>
+                <ListGroupItem key={channel.key}
+                               onClick={selectChannel(channel)}
+                               active={isActive(channel)}>
+                    #{channel.name}
+                </ListGroupItem>
+            )}
+        </ListGroup>
+    );
 
-    render() {
-        const selectChannel = channel => this.props.onSelect(channel);
-
-        return <ChannelListView channels={this.state.channels}
-                                active={this.props.active}
-                                onSelect={selectChannel} />;
-    }
-
-}
+};
 
 export default ChannelList;
