@@ -62,10 +62,25 @@ class ChatService {
     }
 
     ChatMessage processMessage(String channel, ChatMessage message) {
+        def processors = [censorMessage, updateTimestamp]
+
+        processors.inject(message) { m, f -> f(m) }
+    }
+
+    private updateTimestamp = { ChatMessage message ->
+        // Ignore timestamp the client may have provided; set it here.
+        new ChatMessage(
+                author: message.author,
+                message: message.message,
+                timestamp: new Date().time
+        )
+    }
+
+    private censorMessage = { ChatMessage message ->
         new ChatMessage(
                 author: message.author,
                 message: censorService.censor(message.message),
-                timestamp: message.timestamp
+                timestamp: new Date().time
         )
     }
 

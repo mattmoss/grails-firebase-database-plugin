@@ -11,8 +11,7 @@ class ChannelInput extends React.Component {
     sendMessage() {
         firebase.database().ref(`incoming/${this.props.channel.key}`).push({
             author: firebase.auth().currentUser.uid,
-            message: this.state.message.trim(),
-            timestamp: Date.now()
+            message: this.state.message.trim()
         }).then(
             () => {
                 this.setState({ message: '' });
