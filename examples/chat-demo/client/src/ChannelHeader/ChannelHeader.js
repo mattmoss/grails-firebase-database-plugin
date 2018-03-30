@@ -1,10 +1,14 @@
 import React from 'react';
-import ChannelHeaderView from './ChannelHeaderView';
+import { PageHeader } from 'react-bootstrap';
 
-class ChannelHeader extends React.Component {
-    render() {
-        return <ChannelHeaderView channel={this.props.channel} />;
-    }
-}
+const ChannelHeader = ({ channel }) => (
+    <PageHeader>
+        <strong>
+            {channel ? '#' + channel.name : '' }
+        </strong> [ <i>
+        {channel ? channel.topic : 'Select a channel from the list at left.'}
+    </i> ]
+    </PageHeader>
+);
 
 export default ChannelHeader;
