@@ -26,11 +26,13 @@ class App extends React.Component {
     state = {
         channels: [],
         active: null,
+        users: [],
         user: null,
     };
 
     loadChannels() {
         const channelsRef = firebase.database().ref('channels').orderByChild('name');
+
         channelsRef.on('value', snapshot => {
             let channels = [];
             snapshot.forEach(data => {
@@ -40,16 +42,27 @@ class App extends React.Component {
         });
     }
 
+    loadUsers() {
+        const usersRef = firebase.database().ref('users').orderByChild('displayName');
+
+        usersRef.on('value', snapshot => {
+            let users = [];
+            snapshot.forEach(data => {
+                const val = data.val();
+                users.push({ key: data.key, displayName: val.displayName });
+            });
+            this.setState({ users });
+        });
+    }
+
     watchAuthentication() {
         firebase.auth().onAuthStateChanged(user => {
-            this.setState({ user });
+            this.setState({ active: null, user });
             if (!!user) {
-                console.log('User', user.displayName);
-                console.log('UID', user.uid);
                 firebase.database().ref(`users/${user.uid}`).set(
                     { displayName: user.displayName }
                 ).then(
-                    () => console.log('Successfully sent user info'),
+                    () => null,
                     error => console.error('Failed to send user info:', error)
                 );
             }
@@ -58,6 +71,7 @@ class App extends React.Component {
 
     componentDidMount() {
         this.loadChannels();
+        this.loadUsers();
         this.watchAuthentication();
     }
 
@@ -106,7 +120,7 @@ class App extends React.Component {
                             <PageHeader>
                                 <strong>Members</strong>
                             </PageHeader>
-                            <UsersList />
+                            <UsersList users={this.state.users} />
                         </Col>
                     </Row>
                 </Grid>
