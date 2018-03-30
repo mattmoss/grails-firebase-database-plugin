@@ -10,7 +10,7 @@ class ChatService {
     FirebaseDatabase firebaseDatabase
     DatabaseReference document
 
-    CensorService censorService
+    MessageProcessorService messageProcessorService
 
     Map<String, Closure> removeListener = [:]
 
@@ -34,21 +34,26 @@ class ChatService {
         log.info "Listening to channel #${channel}"
 
         def incoming = document["incoming/${channel}"]
+        def messages = document["messages/${channel}"]
 
         def listener = incoming.onChildAdded { DataSnapshot snapshot, prevChild ->
             // Get the incoming message, process it, and post it to outgoing (if it hasn't been vetoed).
-            ChatMessage message = processMessage(channel, snapshot.getValue(ChatMessage))
-            if (message) {
-                document["messages/${channel}"].push().setValue(message) { DatabaseError error, reference ->
+            def msg = messageProcessorService.process(snapshot.getValue(ChatMessage))
+            if (!msg) {
+                // TODO Should notify user their message was rejected.
+                log.warn "Message rejected: ${msg}"
+            }
+            else {
+                messages.push().setValue(msg) { DatabaseError error, DatabaseReference ref ->
                     if (error) {
+                        // TODO Should notify user that something went wrong.
                         log.error "Firebase Database error: ${error.message}"
-                    }
-                    else {
-                        // Once we've processed the message, remove it from incoming.
-                        incoming.remove snapshot.key
                     }
                 }
             }
+
+            // We're done processing the message for good or ill. Remove it from incoming.
+            incoming.remove snapshot.key
         }
 
         // Once we start listening to a channel, provide a way to stop listening.
@@ -59,29 +64,6 @@ class ChatService {
         log.info "Ignoring channel #${channel}"
 
         removeListener.remove(channel).call()
-    }
-
-    ChatMessage processMessage(String channel, ChatMessage message) {
-        def processors = [censorMessage, updateTimestamp]
-
-        processors.inject(message) { m, f -> f(m) }
-    }
-
-    private updateTimestamp = { ChatMessage message ->
-        // Ignore timestamp the client may have provided; set it here.
-        new ChatMessage(
-                author: message.author,
-                message: message.message,
-                timestamp: new Date().time
-        )
-    }
-
-    private censorMessage = { ChatMessage message ->
-        new ChatMessage(
-                author: message.author,
-                message: censorService.censor(message.message),
-                timestamp: new Date().time
-        )
     }
 
 }

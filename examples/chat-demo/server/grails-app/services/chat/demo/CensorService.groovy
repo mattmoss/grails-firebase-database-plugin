@@ -7,7 +7,7 @@ class CensorService {
     final censorPattern = "?!#%@\u2605!"
 
     // Eliminate unwanted words.
-    def censor(String message) {
+    String censor(String message) {
         wordsToCensor.inject(message) { String msg, String word ->
             msg.replaceAll("(?i)${word}", censorPattern)
         }
