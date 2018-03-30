@@ -5,7 +5,8 @@ import ChannelMessagesView from './ChannelMessagesView';
 class ChannelMessages extends React.Component {
 
     state = {
-        messages: []
+        messages: [],
+        users: { }
     };
 
     addMessage(message) {
@@ -44,11 +45,18 @@ class ChannelMessages extends React.Component {
             this.clearMessages();
             this.listenChannel(nextProps.channel);
         }
+
+        let users = { };
+        nextProps.users.forEach(data => {
+            users[data.key] = data;
+        });
+        this.setState({ users });
     }
 
     render() {
         return this.props.channel ?
-            <ChannelMessagesView messages={this.state.messages} /> :
+            <ChannelMessagesView messages={this.state.messages}
+                                 users={this.state.users} /> :
             null;
     }
 

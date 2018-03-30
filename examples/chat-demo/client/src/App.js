@@ -103,7 +103,8 @@ class App extends React.Component {
                         <Col sm={8}>
                             <div>
                                 <ChannelHeader channel={this.state.active} />
-                                <ChannelMessages channel={this.state.active} />
+                                <ChannelMessages channel={this.state.active}
+                                                 users={this.state.users} />
                                 <ChannelInput channel={this.state.active} />
                             </div>
                         </Col>
